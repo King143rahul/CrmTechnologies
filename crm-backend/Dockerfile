@@ -15,8 +15,9 @@ COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/medusa-config.ts ./
 COPY --from=builder /app/src ./src
 
-# ADD THIS LINE TO FIX THE COMPILATION ERROR
+# Fix compilation and admin dashboard
 COPY --from=builder /app/tsconfig.json ./
+COPY --from=builder /app/.medusa/admin ./.medusa/admin
 
 # Create uploads directory
 RUN mkdir -p uploads/dealer-docs
