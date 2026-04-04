@@ -20,7 +20,7 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -33,7 +33,7 @@ services:
     ports:
       - "6379:6379"
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -52,7 +52,7 @@ services:
     ports:
       - "7700:7700"
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--spider", "http://localhost:7700/health"]
+      test: [ "CMD", "wget", "--no-verbose", "--spider", "http://localhost:7700/health" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -70,7 +70,7 @@ services:
       redis:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/medusa-db?sslmode=disable
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/medusa-db
       PGSSLMODE: disable
       REDIS_URL: redis://redis:6379
       JWT_SECRET: supersecret-change-in-production
@@ -82,23 +82,35 @@ services:
       MEILISEARCH_API_KEY: mZonyHGKBTz_SgzA8XgzniOpFLdJmYAl_usKRXcFt6k
       VAT_RATE: "15"
       NODE_ENV: production
+      COOKIE_SECURE: "false"
+      COOKIE_SAME_SITE: lax
     ports:
       - "9000:9000"
     volumes:
       - backend_uploads:/app/uploads
+    healthcheck:
+      test: [ "CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:9000/health || exit 1" ]
+      interval: 10s
+      timeout: 10s
+      retries: 15
+      start_period: 60s
 
   # ── Next.js Storefront ──────────────────────────────────
   frontend:
     build:
       context: ./crm-frontend
       dockerfile: Dockerfile
+      args:
+        MEDUSA_BACKEND_URL: http://backend:9000
     container_name: crm-frontend
     restart: unless-stopped
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     environment:
-      NEXT_PUBLIC_MEDUSA_BACKEND_URL: http://backend:9000
-      NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: ""
+      MEDUSA_BACKEND_URL: http://backend:9000
+      NEXT_PUBLIC_MEDUSA_BACKEND_URL: http://localhost:9000
+      NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: "pk_858f6bf32d7328ecf468a7f88ef53f6de1b34fb0a01f48c9fe0f31e3e35d5918"
       NEXT_PUBLIC_SEARCH_ENDPOINT: http://localhost:7700
       NEXT_PUBLIC_SEARCH_API_KEY: mZonyHGKBTz_SgzA8XgzniOpFLdJmYAl_usKRXcFt6k
       NEXT_PUBLIC_VAT_RATE: "15"

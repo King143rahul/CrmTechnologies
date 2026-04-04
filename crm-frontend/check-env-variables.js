@@ -26,13 +26,14 @@ function checkEnvVariables() {
       }
     })
 
-    console.error(
+    console.warn(
       c.yellow(
         "\nPlease set these variables in your .env file or environment before starting the application.\n"
       )
     )
 
-    process.exit(1)
+    // Don't crash — allow startup so keys can be configured via admin
+    // process.exit(1)
   }
 }
 
