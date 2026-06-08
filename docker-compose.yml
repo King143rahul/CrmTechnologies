@@ -101,7 +101,8 @@ services:
       context: ./crm-frontend
       dockerfile: Dockerfile
       args:
-        MEDUSA_BACKEND_URL: http://backend:9000
+        NEXT_PUBLIC_MEDUSA_BACKEND_URL: http://localhost:9000
+        NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: "pk_858f6bf32d7328ecf468a7f88ef53f6de1b34fb0a01f48c9fe0f31e3e35d5918"
     container_name: crm-frontend
     restart: unless-stopped
     depends_on:

@@ -1,42 +1,47 @@
-import { getBaseURL } from "@lib/util/env"
-import { Metadata } from "next"
-import "styles/globals.css"
+import type { Metadata } from "next";
+import { Inter, Outfit } from "next/font/google";
+import "./globals.css";
+import { Providers } from "./providers";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-outfit",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  metadataBase: new URL(getBaseURL()),
   title: {
-    default: "CRM Technology — ICT & CCTV Solutions",
+    default: "CRM Technology — Premium IT Hardware & Laptop Parts",
     template: "%s | CRM Technology",
   },
   description:
-    "South Africa's trusted distributor for ICT, CCTV, networking, and security solutions. Wholesale and retail pricing available.",
-  keywords: [
-    "CCTV",
-    "ICT",
-    "networking",
-    "security cameras",
-    "South Africa",
-    "distributor",
-    "wholesale",
-    "CRM Technology",
-  ],
+    "South Africa's trusted source for premium laptop parts, replacement screens, SSDs, chargers, and IT hardware. Fast nationwide delivery from Durban.",
+  keywords: ["laptop parts", "IT hardware", "replacement screens", "SSD", "chargers", "CRM Technology", "Durban", "South Africa"],
   openGraph: {
-    title: "CRM Technology — ICT & CCTV Solutions",
-    description:
-      "South Africa's trusted distributor for ICT, CCTV, networking, and security solutions.",
-    siteName: "CRM Technology",
-    locale: "en_ZA",
+    title: "CRM Technology — Premium IT Hardware & Laptop Parts",
+    description: "South Africa's trusted source for premium laptop parts and IT hardware.",
     type: "website",
+    locale: "en_ZA",
+    siteName: "CRM Technology",
   },
-}
+};
 
-export default function RootLayout(props: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <html lang="en" className="dark" data-mode="dark">
-      <body className="bg-[#0a0f1c] text-slate-100 antialiased">
-        <main className="relative">{props.children}</main>
+    <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
+      <body style={{ fontFamily: "var(--font-body)" }}>
+        <Providers>{children}</Providers>
       </body>
     </html>
-  )
+  );
 }
-

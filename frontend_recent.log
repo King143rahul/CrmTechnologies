@@ -1,0 +1,60 @@
+﻿crm-frontend  |     at Generator.next (<anonymous>)
+crm-frontend  |     at s (.next/server/chunks/433.js:2:57202) {
+crm-frontend  |   statusText: 'Bad Request',
+crm-frontend  |   status: 400,
+crm-frontend  |   digest: '410860568'
+crm-frontend  | }
+crm-frontend  | Medusa Error intercepted: Publishable API key required in the request header: x-publishable-api-key. You can manage your keys in settings in the dashboard.
+crm-frontend  | Medusa Error intercepted: Publishable API key required in the request header: x-publishable-api-key. You can manage your keys in settings in the dashboard.
+crm-frontend  |  Γ¿» Error: Publishable API key required in the request header: x-publishable-api-key. You can manage your keys in settings in the dashboard.
+crm-frontend  |     at <unknown> (.next/server/chunks/433.js:2:58212)
+crm-frontend  |     at Generator.next (<anonymous>)
+crm-frontend  |     at s (.next/server/chunks/433.js:2:57202) {
+crm-frontend  |   statusText: 'Bad Request',
+crm-frontend  |   status: 400,
+crm-frontend  |   digest: '410860568'
+crm-frontend  | }
+crm-frontend  |  Γ¿» Error: Publishable API key required in the request header: x-publishable-api-key. You can manage your keys in settings in the dashboard.
+crm-frontend  |     at <unknown> (.next/server/chunks/433.js:2:58212)
+crm-frontend  |     at Generator.next (<anonymous>)
+crm-frontend  |     at s (.next/server/chunks/433.js:2:57202) {
+crm-frontend  |   statusText: 'Bad Request',
+crm-frontend  |   status: 400,
+crm-frontend  |   digest: '410860568'
+crm-frontend  | }
+crm-frontend  | Medusa Error intercepted: Publishable API key required in the request header: x-publishable-api-key. You can manage your keys in settings in the dashboard.
+crm-frontend  | Medusa Error intercepted: Publishable API key required in the request header: x-publishable-api-key. You can manage your keys in settings in the dashboard.
+crm-frontend  |  Γ¿» Error: Publishable API key required in the request header: x-publishable-api-key. You can manage your keys in settings in the dashboard.
+crm-frontend  |     at <unknown> (.next/server/chunks/433.js:2:58212)
+crm-frontend  |     at Generator.next (<anonymous>)
+crm-frontend  |     at s (.next/server/chunks/433.js:2:57202) {
+crm-frontend  |   statusText: 'Bad Request',
+crm-frontend  |   status: 400,
+crm-frontend  |   digest: '410860568'
+crm-frontend  | }
+crm-frontend  |  Γ¿» Error: Publishable API key required in the request header: x-publishable-api-key. You can manage your keys in settings in the dashboard.
+crm-frontend  |     at <unknown> (.next/server/chunks/433.js:2:58212)
+crm-frontend  |     at Generator.next (<anonymous>)
+crm-frontend  |     at s (.next/server/chunks/433.js:2:57202) {
+crm-frontend  |   statusText: 'Bad Request',
+crm-frontend  |   status: 400,
+crm-frontend  |   digest: '410860568'
+crm-frontend  | }
+crm-frontend  | Medusa Error intercepted: Publishable API key required in the request header: x-publishable-api-key. You can manage your keys in settings in the dashboard.
+crm-frontend  | Medusa Error intercepted: Publishable API key required in the request header: x-publishable-api-key. You can manage your keys in settings in the dashboard.
+crm-frontend  |  Γ¿» Error: Publishable API key required in the request header: x-publishable-api-key. You can manage your keys in settings in the dashboard.
+crm-frontend  |     at <unknown> (.next/server/chunks/433.js:2:58212)
+crm-frontend  |     at Generator.next (<anonymous>)
+crm-frontend  |     at s (.next/server/chunks/433.js:2:57202) {
+crm-frontend  |   statusText: 'Bad Request',
+crm-frontend  |   status: 400,
+crm-frontend  |   digest: '410860568'
+crm-frontend  | }
+crm-frontend  |  Γ¿» Error: Publishable API key required in the request header: x-publishable-api-key. You can manage your keys in settings in the dashboard.
+crm-frontend  |     at <unknown> (.next/server/chunks/433.js:2:58212)
+crm-frontend  |     at Generator.next (<anonymous>)
+crm-frontend  |     at s (.next/server/chunks/433.js:2:57202) {
+crm-frontend  |   statusText: 'Bad Request',
+crm-frontend  |   status: 400,
+crm-frontend  |   digest: '410860568'
+crm-frontend  | }

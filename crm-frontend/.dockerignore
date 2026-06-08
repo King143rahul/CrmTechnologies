@@ -1,12 +1,9 @@
 node_modules
 .next
+out
+build
+dist
 .git
 .gitignore
-.github
-.vscode
-coverage
-*.md
-.yarn
-.yarnrc.yml
-.env.local
-.env*.local
+.dockerignore
+Dockerfile

@@ -1,27 +1,22 @@
-# ── Build stage ─────────────────────────────────────────────
+# Build stage
 FROM node:20-alpine AS builder
 WORKDIR /app
+COPY package.json package-lock.json* ./
+RUN npm install
 
-# Accept backend URL as build arg so next build bakes the correct value
-ARG MEDUSA_BACKEND_URL=http://localhost:9000
-ENV MEDUSA_BACKEND_URL=${MEDUSA_BACKEND_URL}
-ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=${MEDUSA_BACKEND_URL}
+ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL=http://localhost:9000
+ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_test
+ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=${NEXT_PUBLIC_MEDUSA_BACKEND_URL}
+ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=${NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY}
 
-COPY package*.json ./
-RUN npm ci
 COPY . .
-RUN NEXT_DISABLE_SOURCEMAPS=1 NEXT_TELEMETRY_DISABLED=1 npm run build
+RUN npm run build
 
-# ── Production stage ────────────────────────────────────────
+# Runner stage
 FROM node:20-alpine AS runner
 WORKDIR /app
-
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/next.config.js ./
-COPY --from=builder /app/check-env-variables.js ./
-
+ENV NODE_ENV=production
+COPY --from=builder /app ./
 EXPOSE 8000
+ENV PORT=8000
 CMD ["npm", "run", "start"]

@@ -1,0 +1,200 @@
+﻿crm-backend  | [32minfo[39m:    MODULE: payment
+crm-backend  | [32minfo[39m:    Skipped. Database is up-to-date for module.
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    MODULE: order
+crm-backend  | [32minfo[39m:    Skipped. Database is up-to-date for module.
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    MODULE: settings
+crm-backend  | [32minfo[39m:    Skipped. Database is up-to-date for module.
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    MODULE: auth
+crm-backend  | [32minfo[39m:    Skipped. Database is up-to-date for module.
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    MODULE: auth
+crm-backend  | [32minfo[39m:    Skipped. Database is up-to-date for module.
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    MODULE: auth
+crm-backend  | [32minfo[39m:    Skipped. Database is up-to-date for module.
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    MODULE: user
+crm-backend  | [32minfo[39m:    Skipped. Database is up-to-date for module.
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    MODULE: fulfillment
+crm-backend  | [32minfo[39m:    Skipped. Database is up-to-date for module.
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    MODULE: fulfillment
+crm-backend  | [32minfo[39m:    Skipped. Database is up-to-date for module.
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    MODULE: fulfillment
+crm-backend  | [32minfo[39m:    Skipped. Database is up-to-date for module.
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    MODULE: notification
+crm-backend  | [32minfo[39m:    Skipped. Database is up-to-date for module.
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    MODULE: notification
+crm-backend  | [32minfo[39m:    Skipped. Database is up-to-date for module.
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    MODULE: notification
+crm-backend  | [32minfo[39m:    Skipped. Database is up-to-date for module.
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    MODULE: cache
+crm-backend  | [32minfo[39m:    Skipped. Database is up-to-date for module.
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    MODULE: event_bus
+crm-backend  | [32minfo[39m:    Skipped. Database is up-to-date for module.
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    MODULE: workflows
+crm-backend  | [32minfo[39m:    Skipped. Database is up-to-date for module.
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    MODULE: locking
+crm-backend  | [32minfo[39m:    Skipped. Database is up-to-date for module.
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    MODULE: file
+crm-backend  | [32minfo[39m:    Skipped. Database is up-to-date for module.
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    MODULE: file
+crm-backend  | [32minfo[39m:    Skipped. Database is up-to-date for module.
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    MODULE: file
+crm-backend  | [32minfo[39m:    Skipped. Database is up-to-date for module.
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    MODULE: dealerApplicationModuleService
+crm-backend  | [32minfo[39m:    Skipped. Database is up-to-date for module.
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    Migrations completed
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    Syncing links...
+crm-backend  | [32minfo[39m:    Database already up-to-date
+crm-backend  | [32minfo[39m:    
+crm-backend  | [32minfo[39m:    No link to load from /app/node_modules/@medusajs/draft-order/.medusa/server/src/links. skipped.
+crm-backend  | [33mwarn[39m:    Local Event Bus installed. This is not recommended for production.
+crm-backend  | [32minfo[39m:    Locking module: Using "in-memory" as default.
+crm-backend  | [32minfo[39m:    No pending migration scripts to execute
+crm-backend  | npm notice
+crm-backend  | npm notice New major version of npm available! 10.8.2 -> 11.12.1
+crm-backend  | npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.12.1
+crm-backend  | npm notice To update run: npm install -g npm@11.12.1
+crm-backend  | npm notice
+crm-backend  | ==> Starting Medusa server...
+crm-backend  | - Creating server
+crm-backend  | [32minfo[39m:    No link to load from /app/node_modules/@medusajs/draft-order/.medusa/server/src/links. skipped.
+crm-backend  | [33mwarn[39m:    Local Event Bus installed. This is not recommended for production.
+crm-backend  | [32minfo[39m:    Locking module: Using "in-memory" as default.
+crm-backend  | [32minfo[39m:    No workflow to load from /app/node_modules/@medusajs/draft-order/.medusa/server/src/workflows. skipped.
+crm-backend  | [32minfo[39m:    No subscriber to load from /app/node_modules/@medusajs/draft-order/.medusa/server/src/subscribers. skipped.
+crm-backend  | [32minfo[39m:    No job to load from /app/node_modules/@medusajs/medusa/dist/jobs. skipped.
+crm-backend  | [32minfo[39m:    No job to load from /app/node_modules/@medusajs/draft-order/.medusa/server/src/jobs. skipped.
+crm-backend  | Γ£ö Server is ready on port: 9000 ΓÇô 14984ms
+crm-backend  | [32minfo[39m:    Admin URL ΓåÆ http://localhost:9000/app
+crm-backend  | [32minfo[39m:    A valid publishable key is required to proceed with the request
+crm-backend  | [32mhttp[39m:    GET /store/regions ΓåÉ - (400) - 18.555 ms
+crm-backend  | [32minfo[39m:    A valid publishable key is required to proceed with the request
+crm-backend  | [32mhttp[39m:    GET /store/regions ΓåÉ - (400) - 21.264 ms
+crm-backend  | [32minfo[39m:    A valid publishable key is required to proceed with the request
+crm-backend  | [32mhttp[39m:    GET /store/customers/me?fields=%2Aorders ΓåÉ - (400) - 17.494 ms
+crm-backend  | [32minfo[39m:    A valid publishable key is required to proceed with the request
+crm-backend  | [32mhttp[39m:    GET /store/collections?fields=id%2C%20handle%2C%20title&limit=100&offset=0 ΓåÉ - (400) - 7.785 ms
+crm-backend  | [32minfo[39m:    A valid publishable key is required to proceed with the request
+crm-backend  | [32mhttp[39m:    GET /store/locales ΓåÉ - (400) - 17.911 ms
+crm-backend  | [32minfo[39m:    A valid publishable key is required to proceed with the request
+crm-backend  | [32mhttp[39m:    GET /store/collections?fields=%2Aproducts&limit=100&offset=0 ΓåÉ - (400) - 7.724 ms
+crm-backend  | [32mhttp[39m:    POST /auth/user/emailpass ΓåÉ http://localhost:9000/app/login (200) - 270.491 ms
+crm-backend  | [32mhttp[39m:    POST /auth/session ΓåÉ http://localhost:9000/app/login (200) - 18.691 ms
+crm-backend  | [32mhttp[39m:    GET /admin/users/me ΓåÉ http://localhost:9000/app (200) - 41.694 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/order-list-57XK2DRD-VtJZxPJu.js ΓåÉ - (404) - 33.231 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-TOCMU7UV-3b3bGXBS.js ΓåÉ - (404) - 9.255 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-P3UUX2T6-r-9UadkH.js ΓåÉ - (404) - 13.485 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-WG7UTTKY-B8BUsxcb.js ΓåÉ - (404) - 13.784 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-INE2QCSC-CvQTWm1Z.js ΓåÉ - (404) - 6.269 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-VT2JJ5C2-Czx45Iik.js ΓåÉ - (404) - 7.614 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-X6BAAGCL-Cmzs-01s.js ΓåÉ - (404) - 6.976 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-DFFLVEZ5-YuU75WZJ.js ΓåÉ - (404) - 16.283 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-NTEWUH4C-Zwbwn2Hl.js ΓåÉ - (404) - 12.241 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-DK4WIVY6-CYCbBMOO.js ΓåÉ - (404) - 10.343 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-ADOCJB6L-CBvvc2RV.js ΓåÉ - (404) - 4.918 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-JUZ754L2-BMVHSM9X.js ΓåÉ - (404) - 12.194 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/react-country-flag.esm-6qOLUnqB.js ΓåÉ - (404) - 12.252 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-XLDQPLK4-NnCzh3J2.js ΓåÉ - (404) - 19.416 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-FBYTX6K7-8s2QXKaE.js ΓåÉ - (404) - 20.803 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-IQBAUTU5-m9a_7Tjy.js ΓåÉ - (404) - 21.171 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-KCWP7RF5-wYqFnYiX.js ΓåÉ - (404) - 5.881 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-C76H5USB-Cj_GmSwy.js ΓåÉ - (404) - 10.004 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-DTZXEQXZ-CqPPLFNu.js ΓåÉ - (404) - 8.786 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-HQKGZADC-BWI-eXve.js ΓåÉ - (404) - 10.508 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-ZQJPHZKI-eYE79ahL.js ΓåÉ - (404) - 9.870 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-EMIHDNB7-Cclc4r8R.js ΓåÉ - (404) - 16.218 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/index-BC5wO5Ux.js ΓåÉ - (404) - 7.460 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-IW4TACOD-BjaTqK7C.js ΓåÉ - (404) - 10.336 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-GIZFNLKK-Cc57m3W-.js ΓåÉ - (404) - 10.032 ms
+crm-backend  | [32mhttp[39m:    GET /admin/notifications?limit=1&offset=0&fields=created_at ΓåÉ http://localhost:9000/app (200) - 135.984 ms
+crm-backend  | [32mhttp[39m:    GET /admin/products?q=&limit=3&fields=id%2Ctitle%2Cthumbnail%2C-type%2C-collection%2C-options%2C-tags%2C-images%2C-variants%2C-sales_channels ΓåÉ http://localhost:9000/app (200) - 151.067 ms
+crm-backend  | [32mhttp[39m:    GET /admin/product-categories?limit=3&fields=id%2Cname ΓåÉ http://localhost:9000/app (200) - 121.892 ms
+crm-backend  | [32mhttp[39m:    GET /admin/product-variants?q=&limit=3&fields=id%2Ctitle%2Csku%2Cproduct_id ΓåÉ http://localhost:9000/app (200) - 133.545 ms
+crm-backend  | [32mhttp[39m:    GET /admin/orders?q=&limit=3&fields=id%2Cdisplay_id%2Cemail ΓåÉ http://localhost:9000/app (200) - 238.332 ms
+crm-backend  | [32mhttp[39m:    GET /admin/collections?q=&limit=3&fields=id%2Ctitle ΓåÉ http://localhost:9000/app (200) - 112.324 ms
+crm-backend  | [32mhttp[39m:    GET /admin/customers?q=&limit=3&fields=id%2Cemail%2Cfirst_name%2Clast_name ΓåÉ http://localhost:9000/app (200) - 93.621 ms
+crm-backend  | [32mhttp[39m:    GET /admin/stores ΓåÉ http://localhost:9000/app (200) - 321.371 ms
+crm-backend  | [32mhttp[39m:    GET /admin/customer-groups?q=&limit=3&fields=id%2Cname ΓåÉ http://localhost:9000/app (200) - 71.620 ms
+crm-backend  | [32mhttp[39m:    GET /admin/inventory-items?q=&limit=3&fields=id%2Ctitle%2Csku ΓåÉ http://localhost:9000/app (200) - 83.141 ms
+crm-backend  | [32mhttp[39m:    GET /admin/promotions?q=&limit=3&fields=id%2Ccode%2Cstatus ΓåÉ http://localhost:9000/app (200) - 90.409 ms
+crm-backend  | [32mhttp[39m:    GET /admin/campaigns?q=&limit=3&fields=id%2Cname ΓåÉ http://localhost:9000/app (200) - 51.776 ms
+crm-backend  | [32mhttp[39m:    GET /admin/users?q=&limit=3&fields=id%2Cemail%2Cfirst_name%2Clast_name ΓåÉ http://localhost:9000/app (200) - 52.775 ms
+crm-backend  | [32mhttp[39m:    GET /admin/price-lists?q=&limit=3&fields=id%2Ctitle ΓåÉ http://localhost:9000/app (200) - 53.237 ms
+crm-backend  | [32mhttp[39m:    GET /admin/regions?q=&limit=3&fields=id%2Cname ΓåÉ http://localhost:9000/app (200) - 40.907 ms
+crm-backend  | [32mhttp[39m:    GET /admin/tax-regions?q=&limit=3&fields=id%2Ccountry_code%2Cprovince_code ΓåÉ http://localhost:9000/app (200) - 74.936 ms
+crm-backend  | [32mhttp[39m:    GET /admin/sales-channels?q=&limit=3&fields=id%2Cname ΓåÉ http://localhost:9000/app (200) - 43.777 ms
+crm-backend  | [32mhttp[39m:    GET /admin/product-tags?q=&limit=3&fields=id%2Cvalue ΓåÉ http://localhost:9000/app (200) - 43.925 ms
+crm-backend  | [32mhttp[39m:    GET /admin/product-types?q=&limit=3&fields=id%2Cvalue ΓåÉ http://localhost:9000/app (200) - 47.415 ms
+crm-backend  | [32mhttp[39m:    GET /admin/return-reasons?q=&limit=3&fields=id%2Clabel%2Cvalue ΓåÉ http://localhost:9000/app (200) - 66.413 ms
+crm-backend  | [32mhttp[39m:    GET /admin/stock-locations?q=&limit=3&fields=id%2Cname ΓåÉ http://localhost:9000/app (200) - 41.408 ms
+crm-backend  | [32mhttp[39m:    GET /admin/shipping-profiles?q=&limit=3&fields=id%2Cname ΓåÉ http://localhost:9000/app (200) - 43.578 ms
+crm-backend  | [32mhttp[39m:    GET /admin/api-keys?q=&limit=3&fields=id%2Ctitle%2Credacted&type=publishable ΓåÉ http://localhost:9000/app (200) - 37.519 ms
+crm-backend  | [32mhttp[39m:    GET /admin/api-keys?q=&limit=3&fields=id%2Ctitle%2Credacted&type=secret ΓåÉ http://localhost:9000/app (200) - 37.282 ms
+crm-backend  | [32mhttp[39m:    GET /admin/customers?limit=1000&fields=id%2Cemail ΓåÉ http://localhost:9000/app/draft-orders (200) - 59.528 ms
+crm-backend  | [32mhttp[39m:    GET /admin/draft-orders?limit=20&offset=0&order=-created_at&fields=%2Bcustomer.%2A%2C%2Bsales_channel.%2A%2C%2Bemail%2C%2Bdisplay_id%2C%2Btotal%2C%2Bcurrency_code%2C%2Bshipping_total%2C%2Btax_total%2C%2Bdiscount_total%2C%2Bitems.%2A%2C%2Bitems.variant.%2A%2C%2Bitems.variant.product.%2A%2C%2Bitems.variant.product.shipping_profile.%2A%2C%2Bitems.variant.options.%2A%2C%2Bregion.%2A ΓåÉ http://localhost:9000/app/draft-orders (200) - 74.330 ms
+crm-backend  | [32mhttp[39m:    GET /admin/sales-channels?limit=1000&fields=id%2Cname ΓåÉ http://localhost:9000/app/draft-orders (200) - 63.325 ms
+crm-backend  | [32mhttp[39m:    GET /admin/regions?limit=1000&fields=id%2Cname ΓåÉ http://localhost:9000/app/draft-orders (200) - 33.871 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/customer-list-UI5EQDII-CH1hyAM5.js ΓåÉ - (404) - 3.258 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-YFIYCS7F-BVSggcZ3.js ΓåÉ - (404) - 2.915 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/promotion-list-L22GJE3P-B3synbQT.js ΓåÉ - (404) - 3.665 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-SC6BSTC7-BiX6e5b2.js ΓåÉ - (404) - 15.003 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-CBYAN3G4-TOVNA68F.js ΓåÉ - (404) - 14.368 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-MSDRGCRR-B9-_pHA2.js ΓåÉ - (404) - 5.645 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-XGSMYYUJ-DgaZRWWt.js ΓåÉ - (404) - 8.070 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/price-list-list-JJXWBCTJ-BkNbgpwW.js ΓåÉ - (404) - 7.197 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-G2J2T2QU-BuOS1Gs3.js ΓåÉ - (404) - 6.423 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-6GU6IDUA-CDc7wW5L.js ΓåÉ - (404) - 6.728 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-W7625H47-DcsZRJ0-.js ΓåÉ - (404) - 3.211 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/product-list-RZNYCKTQ-ouqajgw9.js ΓåÉ - (404) - 8.562 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-BW322BVH-C5lIhHkF.js ΓåÉ - (404) - 8.126 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-R65S6ZZV-CS1MJvQD.js ΓåÉ - (404) - 8.071 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-R4ZOO4ON-4uT9-MVY.js ΓåÉ - (404) - 8.071 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/globe-europe-Bxy7L9uG.js ΓåÉ - (404) - 3.702 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/settings-FKUZ6EYT-CNGBOyxP.js ΓåÉ http://localhost:9000/app/assets/index-D1ENU8Ch.js (404) - 3.122 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/api-key-management-list-2T35G3KT-B7F7ER4H.js ΓåÉ - (404) - 2.993 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-G22WWLPG-C9g-VuwI.js ΓåÉ - (404) - 7.793 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/x-circle-Dd6T3aKE.js ΓåÉ - (404) - 4.001 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/refund-reason-list-YROTDEQW-CZpVnlhs.js ΓåÉ - (404) - 4.751 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-O7JNIATG-BrS0hor3.js ΓåÉ - (404) - 4.705 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-PA3T6IWL-GigmaqU4.js ΓåÉ - (404) - 4.502 ms
+crm-backend  | [32mhttp[39m:    GET /app/assets/chunk-MFALVTRQ-wF_5X3gB.js ΓåÉ - (404) - 2.988 ms
