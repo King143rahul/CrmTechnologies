@@ -75,9 +75,9 @@ services:
       REDIS_URL: redis://redis:6379
       JWT_SECRET: supersecret-change-in-production
       COOKIE_SECRET: supersecret-change-in-production
-      STORE_CORS: http://localhost:8000
+      STORE_CORS: http://localhost:8000,http://localhost:3000
       ADMIN_CORS: http://localhost:9000
-      AUTH_CORS: http://localhost:9000,http://localhost:8000
+      AUTH_CORS: http://localhost:9000,http://localhost:8000,http://localhost:3000
       MEILISEARCH_HOST: http://meilisearch:7700
       MEILISEARCH_API_KEY: mZonyHGKBTz_SgzA8XgzniOpFLdJmYAl_usKRXcFt6k
       VAT_RATE: "15"

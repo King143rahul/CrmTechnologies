@@ -8,6 +8,7 @@ import { useCustomer } from '@/lib/context/CustomerContext';
 import { useToast } from '@/lib/context/ToastContext';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
+import styles from './RegisterPage.module.css';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -50,54 +51,32 @@ export default function RegisterPage() {
       });
       addToast('Account created successfully!', 'success');
       router.push('/account');
-    } catch (err: any) {
-      addToast(err.message || 'Registration failed. Email might be in use.', 'error');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Registration failed. Email might be in use.';
+      addToast(message, 'error');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div
-      style={{
-        minHeight: '85vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 'var(--space-8) 0',
-      }}
-    >
-      <div
-        className="glass-card"
-        style={{
-          width: '100%',
-          maxWidth: '480px',
-          padding: 'var(--space-10) var(--space-8)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 'var(--space-6)',
-        }}
-      >
-        <div style={{ textAlign: 'center' }}>
-          <span
-            className="text-gradient"
-            style={{ fontSize: 'var(--text-3xl)', fontWeight: 'var(--font-weight-bold)', fontFamily: 'var(--font-heading)' }}
-          >
-            LUXE
-          </span>
-          <h2 style={{ fontSize: 'var(--text-xl)', marginTop: 'var(--space-4)' }}>Create an Account</h2>
-          <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--text-xs)', marginTop: 'var(--space-1)' }}>
-            Join LUXE and experience premium minimalist lifestyle essentials.
+    <div className={styles.page}>
+      <div className={styles.card}>
+        <div className={styles.header}>
+          <span className={styles.brandName}>CRM Technology</span>
+          <h2 className={styles.title}>Create an Account</h2>
+          <p className={styles.subtitle}>
+            Join CRM Technology and access premium IT hardware at the best prices.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.nameRow}>
             <Input
               label="First Name"
               placeholder="John"
               value={formData.firstName}
-              onChange={e => setFormData({ ...formData, firstName: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
               leftIcon={<User size={16} />}
               required
             />
@@ -105,7 +84,7 @@ export default function RegisterPage() {
               label="Last Name"
               placeholder="Doe"
               value={formData.lastName}
-              onChange={e => setFormData({ ...formData, lastName: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
             />
           </div>
 
@@ -114,7 +93,7 @@ export default function RegisterPage() {
             label="Email Address"
             placeholder="name@example.com"
             value={formData.email}
-            onChange={e => setFormData({ ...formData, email: e.target.value })}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             leftIcon={<Mail size={16} />}
             required
           />
@@ -124,7 +103,7 @@ export default function RegisterPage() {
             label="Password (min 8 chars)"
             placeholder="Enter a secure password"
             value={formData.password}
-            onChange={e => setFormData({ ...formData, password: e.target.value })}
+            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             leftIcon={<Lock size={16} />}
             rightIcon={
               <button
@@ -143,34 +122,33 @@ export default function RegisterPage() {
             label="Confirm Password"
             placeholder="Re-enter your password"
             value={formData.confirmPassword}
-            onChange={e => setFormData({ ...formData, confirmPassword: e.target.value })}
+            onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
             leftIcon={<Lock size={16} />}
             required
           />
 
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-2)', marginTop: 'var(--space-1)' }}>
-            <input type="checkbox" id="terms" required style={{ marginTop: '3px', cursor: 'pointer' }} />
-            <label htmlFor="terms" style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-secondary)', cursor: 'pointer', lineHeight: 1.4 }}>
+          <div className={styles.termsRow}>
+            <input type="checkbox" id="terms" required className={styles.termsCheckbox} />
+            <label htmlFor="terms" className={styles.termsLabel}>
               I agree to the{' '}
-              <a href="#" style={{ color: 'var(--color-accent-violet)' }}>
-                Terms &amp; Conditions
-              </a>{' '}
+              <a href="#" className={styles.termsLink}>Terms &amp; Conditions</a>{' '}
               and{' '}
-              <a href="#" style={{ color: 'var(--color-accent-violet)' }}>
-                Privacy Policy
-              </a>
-              .
+              <a href="#" className={styles.termsLink}>Privacy Policy</a>.
             </label>
           </div>
 
-          <Button type="submit" isLoading={isSubmitting} className="btn-primary" style={{ width: '100%', marginTop: 'var(--space-3)' }}>
+          <Button
+            type="submit"
+            isLoading={isSubmitting}
+            className={`btn-primary ${styles.submitBtn}`}
+          >
             Register
           </Button>
         </form>
 
-        <div style={{ textAlign: 'center', fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)' }}>
+        <div className={styles.footer}>
           Already have an account?{' '}
-          <Link href="/account/login" style={{ color: 'var(--color-accent-violet)', fontWeight: 'var(--font-weight-semibold)' }}>
+          <Link href="/account/login" className={styles.footerLink}>
             Sign In
           </Link>
         </div>

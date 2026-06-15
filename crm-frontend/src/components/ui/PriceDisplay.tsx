@@ -3,51 +3,39 @@
 import React from 'react';
 import { formatPrice, getPercentageOff } from '@/lib/utils';
 import Badge from './Badge';
+import styles from './PriceDisplay.module.css';
 
 interface PriceDisplayProps {
-  amount: number; // in cents
-  compareAtAmount?: number; // in cents
+  amount: number;
+  compareAtAmount?: number;
   currencyCode?: string;
   size?: 'sm' | 'md' | 'lg';
-  style?: React.CSSProperties;
 }
+
+const sizeClasses = {
+  sm: { price: styles.priceSm, compare: styles.compareSm },
+  md: { price: styles.priceMd, compare: styles.compareMd },
+  lg: { price: styles.priceLg, compare: styles.compareLg },
+};
 
 export function PriceDisplay({
   amount,
   compareAtAmount,
-  currencyCode = 'USD',
+  currencyCode = 'ZAR',
   size = 'md',
-  style,
 }: PriceDisplayProps) {
   const isSale = compareAtAmount && compareAtAmount > amount;
   const discount = isSale ? getPercentageOff(compareAtAmount, amount) : 0;
-
-  const fontSizes = {
-    sm: { current: 'var(--text-base)', original: 'var(--text-xs)' },
-    md: { current: 'var(--text-lg)', original: 'var(--text-sm)' },
-    lg: { current: 'var(--text-2xl)', original: 'var(--text-base)' },
-  };
+  const classes = sizeClasses[size];
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', flexWrap: 'wrap', ...style }}>
-      <span
-        style={{
-          fontSize: fontSizes[size].current,
-          fontWeight: 'var(--font-weight-extrabold)',
-          color: isSale ? 'var(--color-error)' : 'var(--color-blue)',
-        }}
-      >
+    <div className={styles.wrapper}>
+      <span className={`${classes.price} ${isSale ? styles.priceSale : styles.priceRegular}`}>
         {formatPrice(amount, currencyCode)}
       </span>
       {isSale && (
         <>
-          <span
-            style={{
-              fontSize: fontSizes[size].original,
-              textDecoration: 'line-through',
-              color: 'var(--color-text-tertiary)',
-            }}
-          >
+          <span className={`${classes.compare} ${styles.compareAt}`}>
             {formatPrice(compareAtAmount, currencyCode)}
           </span>
           <Badge variant="sale">Save {discount}%</Badge>

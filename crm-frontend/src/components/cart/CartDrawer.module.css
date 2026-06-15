@@ -1,0 +1,232 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.drawer {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  height: 100%;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  background: #ffffff;
+}
+
+/* --- Header --- */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.headerTitle {
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.headerCount {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  background: var(--color-bg-tertiary);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.closeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  transition: color var(--transition-fast);
+}
+
+.closeBtn:hover {
+  color: var(--color-text-primary);
+}
+
+/* --- Items List --- */
+.itemsList {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.cartItem {
+  display: flex;
+  gap: var(--space-4);
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.itemThumb {
+  width: 74px;
+  height: 74px;
+  border-radius: var(--radius-md);
+  background: var(--color-bg-secondary);
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.itemThumbImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.itemInfo {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.itemTitle {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.itemVariant {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+.itemControls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--space-2);
+}
+
+.removeBtn {
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: color var(--transition-fast);
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+}
+
+.removeBtn:hover {
+  color: var(--color-error);
+}
+
+.itemPrice {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  text-align: right;
+}
+
+/* --- Empty State --- */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: var(--space-4);
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+.emptyIcon {
+  padding: var(--space-6);
+  border-radius: var(--radius-full);
+  background: var(--color-bg-secondary);
+}
+
+.emptyTitle {
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.emptyDesc {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  margin-top: 4px;
+  max-width: 200px;
+}
+
+/* --- Footer / Summary --- */
+.footer {
+  padding: var(--space-6);
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.subtotalRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.subtotalLabel {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.subtotalValue {
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.footerNote {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  line-height: 1.4;
+}
+
+.footerActions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.checkoutLink,
+.viewCartLink {
+  width: 100%;
+  text-align: center;
+}

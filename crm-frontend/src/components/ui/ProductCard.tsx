@@ -7,9 +7,9 @@ import { useCart } from '@/lib/context/CartContext';
 import { useWishlist } from '@/lib/context/WishlistContext';
 import { useToast } from '@/lib/context/ToastContext';
 import PriceDisplay from './PriceDisplay';
-import Rating from './Rating';
 import Badge from './Badge';
 import Skeleton from './Skeleton';
+import styles from './ProductCard.module.css';
 
 interface Variant {
   id: string;
@@ -27,6 +27,7 @@ interface Product {
   handle: string;
   thumbnail: string;
   variants?: Variant[];
+  metadata?: Record<string, string>;
   collection?: {
     title: string;
   };
@@ -37,30 +38,65 @@ interface ProductCardProps {
   loading?: boolean;
 }
 
+/**
+ * Extracts tech specifications from product metadata or parses them from the product title.
+ * Returns up to 3 spec strings (CPU, RAM, Storage).
+ */
+function extractSpecs(product: Product): string[] {
+  const specs: string[] = [];
+  const meta = product.metadata || {};
+
+  // Try metadata fields first
+  if (meta.cpu || meta.processor) specs.push(meta.cpu || meta.processor);
+  if (meta.ram || meta.memory) specs.push(meta.ram || meta.memory);
+  if (meta.storage || meta.ssd || meta.hdd) specs.push(meta.storage || meta.ssd || meta.hdd);
+
+  if (specs.length >= 2) return specs.slice(0, 3);
+
+  // Fallback: parse from product title
+  const title = product.title;
+
+  // CPU patterns
+  const cpuMatch = title.match(/(?:Core\s+)?i[3579]-\d{4,5}[A-Z]*/i)
+    || title.match(/Ryzen\s+\d+\s+\d{4}[A-Z]*/i)
+    || title.match(/M[1-4]\s*(?:Pro|Max|Ultra)?/i)
+    || title.match(/Celeron\s*\w*/i)
+    || title.match(/Pentium\s*\w*/i);
+  if (cpuMatch && !specs.some(s => s.toLowerCase().includes(cpuMatch[0].toLowerCase()))) {
+    specs.push(cpuMatch[0].trim());
+  }
+
+  // RAM patterns
+  const ramMatch = title.match(/(\d+)\s*GB\s*(?:RAM|DDR\d?)/i)
+    || title.match(/(\d+)GB/i);
+  if (ramMatch && !specs.some(s => s.toLowerCase().includes('gb'))) {
+    const val = ramMatch[1];
+    specs.push(`${val}GB RAM`);
+  }
+
+  // Storage patterns
+  const storageMatch = title.match(/(\d+)\s*(?:GB|TB)\s*(?:SSD|NVMe|HDD|PCIe)/i)
+    || title.match(/(\d+)TB/i);
+  if (storageMatch && !specs.some(s => s.toLowerCase().includes('ssd') || s.toLowerCase().includes('tb'))) {
+    specs.push(storageMatch[0].trim());
+  }
+
+  return specs.slice(0, 3);
+}
+
 export function ProductCard({ product, loading = false }: ProductCardProps) {
   const { addItem } = useCart();
   const { toggleItem, isInWishlist } = useWishlist();
   const { addToast } = useToast();
   const [isAdding, setIsAdding] = useState(false);
 
-  // Generate demo rating for realistic looks
-  const demoRating = React.useMemo(() => 4 + ((product?.title?.length || 0) % 10) / 10, [product?.title]);
-  const demoReviews = React.useMemo(() => Math.floor(10 + ((product?.id?.length || 0) * 5)), [product?.id]);
-
   if (loading || !product) {
     return (
-      <div
-        className="glass-card"
-        style={{
-          padding: 'var(--space-4)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 'var(--space-4)',
-        }}
-      >
+      <div className={styles.skeletonCard}>
         <Skeleton height="200px" borderRadius="var(--radius-sm)" />
         <Skeleton width="40%" height="14px" />
         <Skeleton width="90%" height="20px" />
+        <Skeleton width="70%" height="14px" />
         <Skeleton width="60%" height="16px" />
         <Skeleton height="36px" borderRadius="var(--radius-sm)" style={{ marginTop: 'auto' }} />
       </div>
@@ -70,8 +106,10 @@ export function ProductCard({ product, loading = false }: ProductCardProps) {
   const defaultVariant = product.variants?.[0];
   const priceAmount = defaultVariant?.calculated_price?.calculated_amount || 0;
   const originalAmount = defaultVariant?.calculated_price?.original_amount;
-  const currencyCode = defaultVariant?.calculated_price?.currency_code || 'USD';
+  const currencyCode = defaultVariant?.calculated_price?.currency_code || 'ZAR';
   const isSale = originalAmount && originalAmount > priceAmount;
+  const specs = extractSpecs(product);
+  const wishlistActive = isInWishlist(product.id);
 
   const handleAddToWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -106,169 +144,79 @@ export function ProductCard({ product, loading = false }: ProductCardProps) {
     }
   };
 
-  const wishlistActive = isInWishlist(product.id);
-
   return (
-    <Link
-      href={`/products/${product.handle}`}
-      style={{
-        background: '#ffffff',
-        border: '1px solid var(--color-border)',
-        padding: 'var(--space-4)',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        position: 'relative',
-        transition: 'box-shadow var(--transition-fast), border-color var(--transition-fast)',
-      }}
-      className="product-card-hover"
-    >
+    <Link href={`/products/${product.handle}`} className={styles.card}>
       {/* Badges / Actions Overlay */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 'var(--space-3)',
-          left: 'var(--space-3)',
-          right: 'var(--space-3)',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          zIndex: 5,
-        }}
-      >
-        <div style={{ display: 'flex', gap: '4px', flexDirection: 'column' }}>
+      <div className={styles.overlay}>
+        <div className={styles.badges}>
           {isSale && <Badge variant="sale">Sale</Badge>}
-          {priceAmount > 10000 && <Badge variant="stock" style={{ background: 'var(--color-navy)', color: 'white' }}>Free Delivery</Badge>}
+          {priceAmount > 200000 && (
+            <Badge variant="stock" className={styles.badgeFreeDelivery}>
+              Free Delivery
+            </Badge>
+          )}
         </div>
         <button
           onClick={handleAddToWishlist}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '32px',
-            height: '32px',
-            borderRadius: 'var(--radius-full)',
-            background: wishlistActive ? 'var(--color-error-bg)' : '#ffffff',
-            border: `1px solid ${wishlistActive ? 'var(--color-error)' : 'var(--color-border)'}`,
-            color: wishlistActive ? 'var(--color-error)' : 'var(--color-text-tertiary)',
-            cursor: 'pointer',
-            transition: 'all var(--transition-fast)',
-            boxShadow: 'var(--shadow-sm)'
-          }}
-          onMouseEnter={e => {
-            if (!wishlistActive) e.currentTarget.style.borderColor = 'var(--color-text-secondary)';
-          }}
-          onMouseLeave={e => {
-            if (!wishlistActive) e.currentTarget.style.borderColor = 'var(--color-border)';
-          }}
+          className={`${styles.wishlistBtn} ${wishlistActive ? styles.wishlistBtnActive : ''}`}
+          aria-label={wishlistActive ? 'Remove from wishlist' : 'Add to wishlist'}
         >
           <Heart size={16} fill={wishlistActive ? 'var(--color-error)' : 'none'} />
         </button>
       </div>
 
-      {/* Image Gallery / Thumbnail Container */}
-      <div
-        style={{
-          width: '100%',
-          height: '200px',
-          overflow: 'hidden',
-          position: 'relative',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          marginBottom: 'var(--space-4)'
-        }}
-      >
+      {/* Thumbnail */}
+      <div className={styles.imageContainer}>
         {product.thumbnail ? (
           <img
             src={product.thumbnail}
             alt={product.title}
-            style={{
-              maxWidth: '100%',
-              maxHeight: '100%',
-              objectFit: 'contain',
-              transition: 'transform var(--transition-base)',
-            }}
-            className="product-image"
+            className={styles.thumbnail}
           />
         ) : (
-          <div
-            style={{
-              width: '100%',
-              height: '100%',
-              background: 'var(--color-bg-secondary)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'var(--color-text-tertiary)',
-              fontSize: 'var(--text-sm)',
-            }}
-          >
-            No Image
-          </div>
+          <div className={styles.noImage}>No Image</div>
         )}
       </div>
 
-      {/* Details */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', flexGrow: 1 }}>
-        <h4
-          style={{
-            fontSize: 'var(--text-sm)',
-            fontWeight: 'var(--font-weight-medium)',
-            lineHeight: 1.4,
-            color: 'var(--color-navy)',
-            overflow: 'hidden',
-            display: '-webkit-box',
-            WebkitLineClamp: 3,
-            WebkitBoxOrient: 'vertical',
-          }}
-        >
-          {product.title}
-        </h4>
+      {/* Product Details */}
+      <div className={styles.details}>
+        {/* Full title — no truncation for tech products */}
+        <h4 className={styles.title}>{product.title}</h4>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-          <Rating value={demoRating} count={demoReviews} showCount />
-        </div>
+        {/* Tech Specs Bullet List */}
+        {specs.length > 0 && (
+          <ul className={styles.specsList}>
+            {specs.map((spec, i) => (
+              <li key={i} className={styles.specItem}>
+                <span className={styles.specDot} />
+                {spec}
+              </li>
+            ))}
+          </ul>
+        )}
 
-        <div style={{ marginTop: 'auto', paddingTop: 'var(--space-2)' }}>
-          <PriceDisplay amount={priceAmount} compareAtAmount={originalAmount} currencyCode={currencyCode} size="md" />
+        {/* Price */}
+        <div className={styles.priceArea}>
+          <PriceDisplay
+            amount={priceAmount}
+            compareAtAmount={originalAmount}
+            currencyCode={currencyCode}
+            size="md"
+          />
         </div>
       </div>
 
-      {/* Quick Add CTA */}
+      {/* Add to Cart CTA */}
       {defaultVariant && (
         <button
           onClick={handleAddToCart}
           disabled={isAdding}
-          className="btn btn-primary"
-          style={{
-            marginTop: 'var(--space-4)',
-            width: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 'var(--space-2)',
-            padding: 'var(--space-2)',
-            borderRadius: 'var(--radius-sm)',
-            fontWeight: 'var(--font-weight-bold)',
-            textTransform: 'uppercase',
-            fontSize: 'var(--text-xs)',
-          }}
+          className={styles.addToCartBtn}
         >
           <ShoppingCart size={16} />
           {isAdding ? 'Adding...' : 'Add to Basket'}
         </button>
       )}
-      <style jsx>{`
-        .product-card-hover:hover {
-          box-shadow: var(--shadow-lg);
-          border-color: var(--color-blue);
-        }
-        .product-card-hover:hover .product-image {
-          transform: scale(1.05);
-        }
-      `}</style>
     </Link>
   );
 }

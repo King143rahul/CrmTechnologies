@@ -8,6 +8,7 @@ import { useCustomer } from '@/lib/context/CustomerContext';
 import { useToast } from '@/lib/context/ToastContext';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
+import styles from './LoginPage.module.css';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -16,7 +17,6 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -29,56 +29,34 @@ export default function LoginPage() {
     setIsSubmitting(true);
     try {
       await login(email, password);
-      addToast('Welcome back to LUXE!', 'success');
+      addToast('Welcome back to CRM Technology!', 'success');
       router.push('/account');
-    } catch (err: any) {
-      addToast(err.message || 'Invalid email or password', 'error');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Invalid email or password';
+      addToast(message, 'error');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div
-      style={{
-        minHeight: '80vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 'var(--space-8) 0',
-      }}
-    >
-      <div
-        className="glass-card"
-        style={{
-          width: '100%',
-          maxWidth: '440px',
-          padding: 'var(--space-10) var(--space-8)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 'var(--space-6)',
-        }}
-      >
-        <div style={{ textAlign: 'center' }}>
-          <span
-            className="text-gradient"
-            style={{ fontSize: 'var(--text-3xl)', fontWeight: 'var(--font-weight-bold)', fontFamily: 'var(--font-heading)' }}
-          >
-            LUXE
-          </span>
-          <h2 style={{ fontSize: 'var(--text-xl)', marginTop: 'var(--space-4)' }}>Sign In to Your Account</h2>
-          <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--text-xs)', marginTop: 'var(--space-1)' }}>
+    <div className={styles.page}>
+      <div className={styles.card}>
+        <div className={styles.header}>
+          <span className={styles.brandName}>CRM Technology</span>
+          <h2 className={styles.title}>Sign In to Your Account</h2>
+          <p className={styles.subtitle}>
             Enter your details to access your account dashboard.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+        <form onSubmit={handleSubmit} className={styles.form}>
           <Input
             type="email"
             label="Email Address"
             placeholder="name@example.com"
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             leftIcon={<Mail size={16} />}
             required
           />
@@ -88,7 +66,7 @@ export default function LoginPage() {
             label="Password"
             placeholder="Enter your password"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             leftIcon={<Lock size={16} />}
             rightIcon={
               <button
@@ -102,28 +80,22 @@ export default function LoginPage() {
             required
           />
 
-          <button
-            type="button"
-            style={{
-              fontSize: 'var(--text-xs)',
-              color: 'var(--color-accent-violet)',
-              alignSelf: 'flex-end',
-              cursor: 'pointer',
-              background: 'transparent',
-              border: 'none',
-            }}
-          >
+          <button type="button" className={styles.forgotBtn}>
             Forgot Password?
           </button>
 
-          <Button type="submit" isLoading={isSubmitting} className="btn-primary" style={{ width: '100%', marginTop: 'var(--space-2)' }}>
+          <Button
+            type="submit"
+            isLoading={isSubmitting}
+            className={`btn-primary ${styles.submitBtn}`}
+          >
             Sign In
           </Button>
         </form>
 
-        <div style={{ textAlign: 'center', fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)' }}>
+        <div className={styles.footer}>
           Don&rsquo;t have an account?{' '}
-          <Link href="/account/register" style={{ color: 'var(--color-accent-violet)', fontWeight: 'var(--font-weight-semibold)' }}>
+          <Link href="/account/register" className={styles.footerLink}>
             Create Account
           </Link>
         </div>

@@ -1,0 +1,20 @@
+.main {
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+  /* TopBar(~30px) + Navbar(~72px) + CategoryNav(~44px) = ~146px */
+  padding-top: 146px;
+}
+
+@media (max-width: 1024px) {
+  .main {
+    /* TopBar + Navbar (no categoryNav) */
+    padding-top: 110px;
+  }
+}
+
+@media (max-width: 768px) {
+  .main {
+    padding-top: 100px;
+  }
+}

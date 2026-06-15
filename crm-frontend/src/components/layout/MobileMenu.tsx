@@ -1,9 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { X } from 'lucide-react';
+import { X, ChevronDown, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { categoryData } from '@/lib/categoriesData';
+import styles from './MobileMenu.module.css';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -11,115 +13,147 @@ interface MobileMenuProps {
 }
 
 export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
-  const categories = [
-    { name: 'Laptops', href: '/products?category=laptops' },
-    { name: 'PCs & Monitors', href: '/products?category=desktops' },
-    { name: 'Gaming', href: '/products?category=gaming' },
-    { name: 'Storage & Memory', href: '/products?category=storage' },
-    { name: 'Components', href: '/products?category=components' },
-    { name: 'Accessories', href: '/products?category=accessories' },
-    { name: 'Clearance', href: '/collections/clearance', highlight: true },
-  ];
+  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
+  const [expandedSubCategories, setExpandedSubCategories] = useState<Record<string, boolean>>({});
+
+  const toggleCategory = (catName: string) => {
+    setExpandedCategories((prev) => ({
+      ...prev,
+      [catName]: !prev[catName],
+    }));
+  };
+
+  const toggleSubCategory = (subName: string) => {
+    setExpandedSubCategories((prev) => ({
+      ...prev,
+      [subName]: !prev[subName],
+    }));
+  };
 
   return (
     <AnimatePresence>
       {isOpen && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 200,
-            display: 'flex',
-          }}
-        >
-          {/* Backdrop blur */}
+        <div className={styles.overlay}>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'rgba(0, 0, 0, 0.4)',
-              backdropFilter: 'blur(2px)',
-            }}
+            className={styles.backdrop}
           />
 
-          {/* Drawer Panel */}
           <motion.div
             initial={{ x: '-100%' }}
             animate={{ x: 0 }}
             exit={{ x: '-100%' }}
             transition={{ type: 'spring', damping: 26, stiffness: 220 }}
-            style={{
-              position: 'relative',
-              width: '80%',
-              maxWidth: '320px',
-              height: '100%',
-              background: '#ffffff',
-              boxShadow: 'var(--shadow-xl)',
-              display: 'flex',
-              flexDirection: 'column',
-              padding: 'var(--space-4)',
-              zIndex: 10,
-            }}
+            className={styles.drawer}
           >
-            {/* Header */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 'var(--space-4)', borderBottom: '1px solid var(--color-border)' }}>
-              <span style={{ fontSize: '18px', fontWeight: 'var(--font-weight-extrabold)', color: 'var(--color-navy)' }}>
-                Departments
-              </span>
-              <button
-                onClick={onClose}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: 'var(--radius-sm)',
-                  cursor: 'pointer',
-                  color: 'var(--color-text-secondary)',
-                  background: 'var(--color-bg-secondary)'
-                }}
-              >
+            <div className={styles.drawerHeader}>
+              <span className={styles.drawerTitle}>Departments</span>
+              <button onClick={onClose} className={styles.closeBtn} aria-label="Close menu">
                 <X size={20} />
               </button>
             </div>
 
-            {/* Links Stack */}
-            <nav style={{ display: 'flex', flexDirection: 'column', overflowY: 'auto', paddingTop: 'var(--space-4)' }}>
-              {categories.map((cat, idx) => (
-                <Link
-                  key={idx}
-                  href={cat.href}
-                  onClick={onClose}
-                  style={{
-                    fontSize: 'var(--text-base)',
-                    fontWeight: 'var(--font-weight-semibold)',
-                    color: cat.highlight ? 'var(--color-error)' : 'var(--color-text-primary)',
-                    padding: 'var(--space-3) var(--space-2)',
-                    borderBottom: '1px solid var(--color-border)',
-                  }}
-                >
-                  {cat.name}
-                </Link>
-              ))}
+            <nav className={styles.nav}>
+              {categoryData.map((cat) => {
+                const isCatExpanded = !!expandedCategories[cat.name];
+                return (
+                  <div key={cat.name} className={styles.categoryBlock}>
+                    <div className={styles.categoryHeader}>
+                      <Link
+                        href={cat.href}
+                        onClick={onClose}
+                        className={styles.categoryMainLink}
+                      >
+                        {cat.name}
+                      </Link>
+                      <button
+                        onClick={() => toggleCategory(cat.name)}
+                        className={styles.expandBtn}
+                        aria-label={`Toggle ${cat.name}`}
+                      >
+                        <ChevronDown
+                          size={18}
+                          className={`${styles.chevron} ${isCatExpanded ? styles.chevronOpen : ''}`}
+                        />
+                      </button>
+                    </div>
+
+                    <AnimatePresence initial={false}>
+                      {isCatExpanded && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className={styles.subCatContainer}
+                        >
+                          {cat.subcategories.map((sub) => {
+                            const isSubExpanded = !!expandedSubCategories[sub.name];
+                            return (
+                              <div key={sub.name} className={styles.subCategoryBlock}>
+                                <div className={styles.subCategoryHeader}>
+                                  <Link
+                                    href={sub.href}
+                                    onClick={onClose}
+                                    className={styles.subCatLink}
+                                  >
+                                    {sub.name}
+                                  </Link>
+                                  {sub.items && (
+                                    <button
+                                      onClick={() => toggleSubCategory(sub.name)}
+                                      className={styles.expandSubBtn}
+                                      aria-label={`Toggle ${sub.name}`}
+                                    >
+                                      <ChevronDown
+                                        size={14}
+                                        className={`${styles.chevron} ${isSubExpanded ? styles.chevronOpen : ''}`}
+                                      />
+                                    </button>
+                                  )}
+                                </div>
+
+                                {sub.items && isSubExpanded && (
+                                  <div className={styles.nestedItemsList}>
+                                    {sub.items.map((item) => {
+                                      const itemHref = `${sub.href}?q=${encodeURIComponent(item)}`;
+                                      return (
+                                        <Link
+                                          key={item}
+                                          href={itemHref}
+                                          onClick={onClose}
+                                          className={styles.nestedLink}
+                                        >
+                                          {item}
+                                        </Link>
+                                      );
+                                    })}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              })}
             </nav>
 
-            <div style={{ marginTop: 'auto', borderTop: '1px solid var(--color-border)', paddingTop: 'var(--space-4)' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-                <Link href="/account" onClick={onClose} style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-medium)' }}>
-                  My Account
-                </Link>
-                <Link href="/track-order" onClick={onClose} style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-medium)' }}>
-                  Track Order
-                </Link>
-                <Link href="/store-finder" onClick={onClose} style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-medium)' }}>
-                  Store Finder
-                </Link>
-              </div>
+            <div className={styles.footer}>
+              <Link href="/account" onClick={onClose} className={styles.footerLink}>
+                My Account
+              </Link>
+              <Link href="/track-order" onClick={onClose} className={styles.footerLink}>
+                Track Order
+              </Link>
+              <Link href="/store-finder" onClick={onClose} className={styles.footerLink}>
+                Store Finder
+              </Link>
             </div>
           </motion.div>
         </div>

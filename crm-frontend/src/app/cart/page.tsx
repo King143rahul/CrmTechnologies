@@ -1,100 +1,75 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
+import Link from 'next/navigation';
+import NextLink from 'next/link';
 import { ShoppingBag, Trash2, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useCart } from '@/lib/context/CartContext';
 import { formatPrice } from '@/lib/utils';
 import QuantitySelector from '@/components/ui/QuantitySelector';
 import Button from '@/components/ui/Button';
 import Breadcrumb from '@/components/ui/Breadcrumb';
+import styles from './CartPage.module.css';
 
 export default function CartPage() {
   const { cart, updateItem, removeItem, itemCount } = useCart();
 
   const cartSubtotal = cart?.subtotal || 0;
-  const currencyCode = cart?.region?.currency_code || 'USD';
-  const shippingCost = cartSubtotal >= 15000 ? 0 : 1500; // Free above $150
-  const taxCost = Math.round(cartSubtotal * 0.08); // 8% Tax
+  const currencyCode = cart?.region?.currency_code || 'ZAR';
+  const shippingCost = cartSubtotal >= 15000 ? 0 : 1500; // Free above R150
+  const taxCost = Math.round(cartSubtotal * 0.15); // standard 15% VAT for ZAR
   const cartTotal = cartSubtotal + shippingCost + taxCost;
 
   return (
-    <div className="container" style={{ paddingTop: 'var(--space-8)', paddingBottom: 'var(--space-12)' }}>
+    <div className={styles.container}>
       {/* Breadcrumb */}
-      <Breadcrumb items={[{ label: 'Cart' }]} style={{ marginBottom: 'var(--space-8)' }} />
+      <div className={styles.breadcrumb}>
+        <Breadcrumb items={[{ label: 'Cart' }]} />
+      </div>
 
-      <h1 style={{ fontSize: 'var(--text-3xl)', marginBottom: 'var(--space-8)' }}>Shopping Cart</h1>
+      <h1 className={styles.title}>Shopping Cart</h1>
 
       {cart?.items && cart.items.length > 0 ? (
-        <div className="cart-page-layout">
+        <div className={styles.cartPageLayout}>
           {/* Items Listing List (Left) */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)', flexGrow: 1 }}>
+          <div className={styles.itemsList}>
             {cart.items.map(item => {
               const itemPrice = item.variant?.calculated_price?.calculated_amount || item.unit_price || 0;
               return (
-                <div
-                  key={item.id}
-                  className="glass-card"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 'var(--space-5)',
-                    padding: 'var(--space-5)',
-                    flexWrap: 'wrap',
-                  }}
-                >
+                <div key={item.id} className={styles.cartItem}>
                   {/* Thumbnail */}
-                  <div
-                    style={{
-                      width: '90px',
-                      height: '90px',
-                      background: 'var(--color-bg-secondary)',
-                      borderRadius: 'var(--radius-lg)',
-                      overflow: 'hidden',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                    }}
-                  >
+                  <div className={styles.itemThumbWrapper}>
                     {item.thumbnail ? (
-                      <img src={item.thumbnail} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <img src={item.thumbnail} alt={item.title} className={styles.itemThumb} />
                     ) : (
                       <ShoppingBag size={28} color="var(--color-text-tertiary)" />
                     )}
                   </div>
 
                   {/* Info Column */}
-                  <div style={{ flexGrow: 1, minWidth: '160px', display: 'flex', flexDirection: 'column', gap: 'var(--space-1)' }}>
-                    <h3 style={{ fontSize: 'var(--text-base)', fontWeight: 'var(--font-weight-semibold)' }}>{item.title}</h3>
+                  <div className={styles.itemInfo}>
+                    <h3 className={styles.itemTitle}>{item.title}</h3>
                     {item.variant?.title && (
-                      <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-secondary)' }}>
+                      <span className={styles.itemMeta}>
                         Variant: {item.variant.title}
                       </span>
                     )}
-                    <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-tertiary)' }}>
+                    <span className={styles.itemPrice}>
                       Unit Price: {formatPrice(itemPrice, currencyCode)}
                     </span>
                   </div>
 
                   {/* Controls Column */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-6)', flexWrap: 'wrap' }}>
+                  <div className={styles.itemControls}>
                     <QuantitySelector value={item.quantity} onChange={val => updateItem(item.id, val)} />
 
-                    <div style={{ fontSize: 'var(--text-base)', fontWeight: 'var(--font-weight-bold)', minWidth: '80px', textAlign: 'right' }}>
+                    <div className={styles.itemSubtotal}>
                       {formatPrice(itemPrice * item.quantity, currencyCode)}
                     </div>
 
                     <button
                       onClick={() => removeItem(item.id)}
-                      style={{
-                        cursor: 'pointer',
-                        color: 'var(--color-text-secondary)',
-                        transition: 'color var(--transition-fast)',
-                        padding: '4px',
-                      }}
-                      onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-accent-rose)')}
-                      onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-text-secondary)')}
+                      className={styles.removeBtn}
                     >
                       <Trash2 size={18} />
                     </button>
@@ -103,87 +78,70 @@ export default function CartPage() {
               );
             })}
 
-            <Link href="/products" style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-2)', color: 'var(--color-text-secondary)', fontSize: 'var(--text-sm)' }}>
+            <NextLink href="/products" className={styles.continueShopping}>
               <ArrowLeft size={16} /> Continue Shopping
-            </Link>
+            </NextLink>
           </div>
 
           {/* Sidebar Order Summary (Right) */}
-          <aside className="summary-sidebar">
-            <div className="glass-card" style={{ padding: 'var(--space-6)', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-              <h3 style={{ fontSize: 'var(--text-lg)', fontWeight: 'var(--font-weight-bold)', borderBottom: '1px solid var(--color-border)', paddingBottom: 'var(--space-4)' }}>
+          <aside className={styles.summarySidebar}>
+            <div className={styles.summaryCard}>
+              <h3 className={styles.summaryTitle}>
                 Order Summary
               </h3>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--text-sm)' }}>
-                  <span style={{ color: 'var(--color-text-secondary)' }}>Subtotal ({itemCount} items)</span>
+              <div className={styles.summaryDetails}>
+                <div className={styles.summaryRow}>
+                  <span className={styles.summaryRowLabelSecondary}>Subtotal ({itemCount} items)</span>
                   <span>{formatPrice(cartSubtotal, currencyCode)}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--text-sm)' }}>
-                  <span style={{ color: 'var(--color-text-secondary)' }}>Shipping</span>
+                <div className={styles.summaryRow}>
+                  <span className={styles.summaryRowLabelSecondary}>Shipping</span>
                   <span>{shippingCost === 0 ? 'Free' : formatPrice(shippingCost, currencyCode)}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--text-sm)' }}>
-                  <span style={{ color: 'var(--color-text-secondary)' }}>Estimated Tax</span>
+                <div className={styles.summaryRow}>
+                  <span className={styles.summaryRowLabelSecondary}>Estimated Tax (VAT)</span>
                   <span>{formatPrice(taxCost, currencyCode)}</span>
                 </div>
                 {shippingCost > 0 && (
-                  <p style={{ fontSize: '11px', color: 'var(--color-text-tertiary)', fontStyle: 'italic', marginTop: '2px' }}>
+                  <p className={styles.shippingPromo}>
                     Add {formatPrice(15000 - cartSubtotal, currencyCode)} more to get Free Shipping!
                   </p>
                 )}
               </div>
 
-              <div style={{ height: '1px', background: 'var(--color-border)', margin: 'var(--space-2) 0' }} />
+              <div className={styles.divider} />
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'var(--font-weight-bold)', fontSize: 'var(--text-lg)' }}>
+              <div className={styles.totalRow}>
                 <span>Order Total</span>
                 <span className="text-gradient">{formatPrice(cartTotal, currencyCode)}</span>
               </div>
 
-              <Link href="/checkout" style={{ width: '100%', marginTop: 'var(--space-4)' }}>
-                <Button className="btn-primary" style={{ width: '100%', padding: '14px 0' }}>
+              <NextLink href="/checkout" className={styles.checkoutLink}>
+                <Button className={`btn-primary ${styles.checkoutBtn}`}>
                   Proceed to Checkout <ArrowRight size={18} />
                 </Button>
-              </Link>
+              </NextLink>
             </div>
           </aside>
         </div>
       ) : (
-        <div className="glass" style={{ borderRadius: 'var(--radius-xl)', padding: 'var(--space-16) 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-6)', textAlign: 'center' }}>
-          <div style={{ padding: 'var(--space-6)', borderRadius: 'var(--radius-full)', background: 'var(--color-surface-glass)' }}>
+        <div className={styles.emptyState}>
+          <div className={styles.emptyIconWrapper}>
             <ShoppingBag size={48} color="var(--color-text-tertiary)" />
           </div>
           <div>
-            <h2 style={{ fontSize: 'var(--text-xl)' }}>Your shopping cart is empty</h2>
-            <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--text-sm)', marginTop: 'var(--space-2)' }}>
+            <h2 className={styles.emptyTitle}>Your shopping cart is empty</h2>
+            <p className={styles.emptySub}>
               Explore our collections and add items to your cart.
             </p>
           </div>
-          <Link href="/products">
+          <NextLink href="/products">
             <Button className="btn-primary">Explore Products</Button>
-          </Link>
+          </NextLink>
         </div>
       )}
-
-      <style jsx global>{`
-        .cart-page-layout {
-          display: grid;
-          grid-template-columns: 1.2fr 0.8fr;
-          gap: var(--space-8);
-          align-items: start;
-        }
-        .summary-sidebar {
-          position: sticky;
-          top: 96px;
-        }
-        @media (max-width: 992px) {
-          .cart-page-layout {
-            grid-template-columns: 1fr;
-          }
-        }
-      `}</style>
     </div>
   );
 }
+

@@ -1,9 +1,20 @@
 import { medusaRequest } from '../medusa';
+import { getRegions } from './regions';
 
 export async function createCart() {
+  let regionId: string | undefined;
+  try {
+    const regionData = await getRegions();
+    if (regionData?.regions?.length) {
+      regionId = regionData.regions[0].id;
+    }
+  } catch (e) {
+    console.error('Failed to fetch regions:', e);
+  }
+
   return medusaRequest('/store/carts', {
     method: 'POST',
-    body: JSON.stringify({}),
+    body: JSON.stringify(regionId ? { region_id: regionId } : {}),
   });
 }
 

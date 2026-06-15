@@ -1,4 +1,7 @@
-const MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000';
+const isBrowser = typeof window !== 'undefined';
+const MEDUSA_BACKEND_URL = isBrowser
+  ? 'http://localhost:9000'
+  : (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000');
 const PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || '';
 
 export async function medusaRequest(path: string, options: RequestInit = {}) {

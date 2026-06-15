@@ -4,8 +4,9 @@ export function cn(...inputs: ClassValue[]) {
   return clsx(inputs);
 }
 
-export function formatPrice(amount: number, currencyCode: string = 'USD'): string {
-  return new Intl.NumberFormat('en-US', {
+export function formatPrice(amount: number, currencyCode: string = 'ZAR'): string {
+  const locale = currencyCode.toUpperCase() === 'ZAR' ? 'en-ZA' : 'en-US';
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: currencyCode,
   }).format(amount / 100);

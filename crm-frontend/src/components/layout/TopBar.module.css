@@ -1,0 +1,72 @@
+.topBar {
+  background: var(--color-navy);
+  color: #ffffff;
+  font-size: var(--text-xs);
+  padding: var(--space-1) 0;
+  width: 100%;
+  position: relative;
+  z-index: 101;
+}
+
+.inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.businessLink {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.businessLabel {
+  font-weight: var(--font-weight-medium);
+  color: #a0aec0;
+}
+
+.businessCta {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.rightLink {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: color var(--transition-fast);
+}
+
+.rightLink:hover {
+  color: var(--color-orange);
+}
+
+.phoneLink {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: var(--font-weight-bold);
+}
+
+@media (max-width: 768px) {
+  .inner {
+    flex-direction: column;
+    gap: 4px;
+    padding: 4px var(--space-4);
+  }
+  .left {
+    display: none;
+  }
+}

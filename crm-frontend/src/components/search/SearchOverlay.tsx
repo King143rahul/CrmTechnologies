@@ -285,7 +285,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
                       {results.map(prod => {
                         const price = prod.variants?.[0]?.calculated_price?.calculated_amount || 0;
-                        const currency = prod.variants?.[0]?.calculated_price?.currency_code || 'USD';
+                        const currency = prod.variants?.[0]?.calculated_price?.currency_code || 'ZAR';
                         return (
                           <Link
                             key={prod.id}

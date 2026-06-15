@@ -11,23 +11,19 @@ import { getCustomerOrders } from '@/lib/api/customer';
 import { formatPrice, formatDate } from '@/lib/utils';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
-
-const MOCK_ORDERS = [
-  { id: 'ORD-849182', created_at: '2026-05-12T10:14:00Z', status: 'delivered', total: 12500, items_count: 2 },
-  { id: 'ORD-724912', created_at: '2026-04-03T14:35:00Z', status: 'delivered', total: 8500, items_count: 1 },
-];
+import styles from './AccountPage.module.css';
 
 function AccountContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
-  const { customer, isAuthenticated, token, logout, refreshCustomer } = useCustomer();
+  const { customer, isAuthenticated, token, logout } = useCustomer();
   const { items: wishlistItems, removeItem: removeFromWishlist } = useWishlist();
   const { addToast } = useToast();
 
   const queryTab = searchParams.get('tab') || 'overview';
   const [activeTab, setActiveTab] = useState(queryTab);
-  const [orders, setOrders] = useState(MOCK_ORDERS);
+  const [orders, setOrders] = useState<any[]>([]);
   const [isLoadingOrders, setIsLoadingOrders] = useState(false);
 
   // Form states
@@ -81,7 +77,7 @@ function AccountContent() {
           setOrders(data.orders);
         }
       } catch (err) {
-        console.warn('API error listing orders, showing mock order list', err);
+        console.warn('API error listing orders:', err);
       } finally {
         setIsLoadingOrders(false);
       }
@@ -128,113 +124,81 @@ function AccountContent() {
   ];
 
   return (
-    <div className="container" style={{ paddingTop: 'var(--space-8)', paddingBottom: 'var(--space-12)' }}>
-      <h1 style={{ fontSize: 'var(--text-3xl)', marginBottom: 'var(--space-8)' }}>My Account</h1>
+    <div className={styles.container}>
+      <h1 className={styles.title}>My Account</h1>
 
-      <div className="account-layout">
+      <div className={styles.accountLayout}>
         {/* Navigation Sidebar */}
-        <aside className="account-sidebar">
-          <div className="glass-card" style={{ padding: 'var(--space-4)', display: 'flex', flexDirection: 'column', gap: 'var(--space-1)' }}>
+        <aside className={styles.accountSidebar}>
+          <div className={styles.sidebarCard}>
             {tabs.map(tab => {
               const isActive = activeTab === tab.id;
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 'var(--space-3)',
-                    padding: 'var(--space-3) var(--space-4)',
-                    borderRadius: 'var(--radius-lg)',
-                    fontSize: 'var(--text-sm)',
-                    fontWeight: isActive ? 'var(--font-weight-semibold)' : 'var(--font-weight-normal)',
-                    color: isActive ? 'var(--color-text-primary)' : 'var(--color-text-secondary)',
-                    background: isActive ? 'var(--color-surface-glass-hover)' : 'transparent',
-                    cursor: 'pointer',
-                    transition: 'all var(--transition-fast)',
-                    textAlign: 'left',
-                  }}
-                  onMouseEnter={e => {
-                    if (!isActive) e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.02)';
-                  }}
-                  onMouseLeave={e => {
-                    if (!isActive) e.currentTarget.style.backgroundColor = 'transparent';
-                  }}
+                  className={`${styles.sidebarBtn} ${isActive ? styles.sidebarBtnActive : styles.sidebarBtnInactive}`}
                 >
                   {tab.icon} {tab.label}
                 </button>
               );
             })}
-            <div style={{ height: '1px', background: 'var(--color-border)', margin: 'var(--space-2) 0' }} />
-            <button
-              onClick={handleLogout}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 'var(--space-3)',
-                padding: 'var(--space-3) var(--space-4)',
-                borderRadius: 'var(--radius-lg)',
-                fontSize: 'var(--text-sm)',
-                color: 'var(--color-accent-rose)',
-                cursor: 'pointer',
-                textAlign: 'left',
-              }}
-            >
+            <div className={styles.divider} />
+            <button onClick={handleLogout} className={styles.logoutBtn}>
               <LogOut size={16} /> Logout
             </button>
           </div>
         </aside>
 
         {/* Tab content panel */}
-        <main style={{ flexGrow: 1 }} className="glass-card">
-          <div style={{ padding: 'var(--space-8)' }}>
+        <main className={styles.mainContent}>
+          <div>
             {/* T1: Overview */}
             {activeTab === 'overview' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-8)' }}>
+              <div className={styles.tabContent}>
                 <div>
-                  <h2 style={{ fontSize: 'var(--text-xl)' }}>Welcome back, {customer?.first_name || 'Guest'}!</h2>
-                  <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--text-sm)', marginTop: '2px' }}>
+                  <h2 className={styles.sectionTitle}>Welcome back, {customer?.first_name || 'Guest'}!</h2>
+                  <p className={styles.sectionSub}>
                     Manage your orders, profile updates, and shipping details.
                   </p>
                 </div>
 
                 {/* Info Cards Grid */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--space-4)' }} className="overview-cards">
-                  <div className="glass" style={{ padding: 'var(--space-5)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)' }}>
-                    <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-secondary)', textTransform: 'uppercase' }}>Total Orders</span>
-                    <h3 style={{ fontSize: 'var(--text-2xl)', marginTop: 'var(--space-2)' }}>{orders.length}</h3>
+                <div className={styles.overviewCards}>
+                  <div className={styles.infoCard}>
+                    <span className={styles.cardLabel}>Total Orders</span>
+                    <h3 className={styles.cardValue}>{isLoadingOrders ? '...' : orders.length}</h3>
                   </div>
-                  <div className="glass" style={{ padding: 'var(--space-5)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)' }}>
-                    <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-secondary)', textTransform: 'uppercase' }}>Wishlist</span>
-                    <h3 style={{ fontSize: 'var(--text-2xl)', marginTop: 'var(--space-2)' }}>{wishlistItems.length} items</h3>
+                  <div className={styles.infoCard}>
+                    <span className={styles.cardLabel}>Wishlist</span>
+                    <h3 className={styles.cardValue}>{wishlistItems.length} items</h3>
                   </div>
-                  <div className="glass" style={{ padding: 'var(--space-5)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)' }}>
-                    <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-secondary)', textTransform: 'uppercase' }}>Registered Email</span>
-                    <p style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-semibold)', marginTop: 'var(--space-2)', textOverflow: 'ellipsis', overflow: 'hidden' }}>{customer?.email}</p>
+                  <div className={styles.infoCard}>
+                    <span className={styles.cardLabel}>Registered Email</span>
+                    <p className={styles.cardValueText}>{customer?.email}</p>
                   </div>
                 </div>
 
                 {/* Recent Order Summary */}
                 <div>
-                  <h3 style={{ fontSize: 'var(--text-base)', marginBottom: 'var(--space-4)' }}>Recent Order</h3>
+                  <h3 className={styles.recentOrderHeader}>Recent Order</h3>
                   {orders.length > 0 ? (
-                    <div className="glass" style={{ padding: 'var(--space-4) var(--space-6)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--space-4)' }}>
+                    <div className={styles.orderRow}>
                       <div>
-                        <span style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-bold)' }}>{orders[0].id}</span>
-                        <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-secondary)', display: 'block', marginTop: '2px' }}>
+                        <span className={styles.orderId}>{orders[0].id}</span>
+                        <span className={styles.orderDate}>
                           Placed on {formatDate(orders[0].created_at)}
                         </span>
                       </div>
                       <div className="badge badge-stock" style={{ textTransform: 'capitalize' }}>
                         {orders[0].status}
                       </div>
-                      <span style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-bold)' }}>
-                        {formatPrice(orders[0].total, 'USD')}
+                      <span className={styles.orderTotal}>
+                        {formatPrice(orders[0].total, 'ZAR')}
                       </span>
                     </div>
                   ) : (
-                    <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-tertiary)' }}>No orders placed yet.</p>
+                    <p className={styles.emptyState}>No orders placed yet.</p>
                   )}
                 </div>
               </div>
@@ -242,37 +206,24 @@ function AccountContent() {
 
             {/* T2: Orders */}
             {activeTab === 'orders' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
-                <h2 style={{ fontSize: 'var(--text-xl)' }}>Order History</h2>
+              <div className={styles.tabContent}>
+                <h2 className={styles.sectionTitle}>Order History</h2>
                 {orders.length > 0 ? (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+                  <div className={styles.ordersList}>
                     {orders.map(order => (
-                      <div
-                        key={order.id}
-                        className="glass"
-                        style={{
-                          padding: 'var(--space-5)',
-                          borderRadius: 'var(--radius-lg)',
-                          border: '1px solid var(--color-border)',
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          flexWrap: 'wrap',
-                          gap: 'var(--space-4)',
-                        }}
-                      >
+                      <div key={order.id} className={styles.orderRow}>
                         <div>
-                          <span style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-bold)' }}>{order.id}</span>
-                          <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-secondary)', display: 'block', marginTop: '2px' }}>
-                            {formatDate(order.created_at)} &bull; {order.items_count} items
+                          <span className={styles.orderId}>{order.id}</span>
+                          <span className={styles.orderDate}>
+                            {formatDate(order.created_at)} &bull; {order.items?.length || 0} items
                           </span>
                         </div>
                         <div className="badge badge-stock" style={{ textTransform: 'capitalize' }}>
                           {order.status}
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
-                          <span style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-bold)' }}>
-                            {formatPrice(order.total, 'USD')}
+                        <div className={styles.orderDetailBtnGroup}>
+                          <span className={styles.orderTotal}>
+                            {formatPrice(order.total, 'ZAR')}
                           </span>
                           <Button variant="ghost" className="btn-sm">
                             Details <ArrowRight size={14} />
@@ -282,7 +233,7 @@ function AccountContent() {
                     ))}
                   </div>
                 ) : (
-                  <div style={{ textAlign: 'center', padding: 'var(--space-8) 0', color: 'var(--color-text-tertiary)' }}>
+                  <div className={styles.emptyState} style={{ textAlign: 'center', padding: 'var(--space-8) 0' }}>
                     No orders found.
                   </div>
                 )}
@@ -291,9 +242,9 @@ function AccountContent() {
 
             {/* T3: Profile */}
             {activeTab === 'profile' && (
-              <form onSubmit={handleUpdateProfile} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
-                <h2 style={{ fontSize: 'var(--text-xl)' }}>Profile Information</h2>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+              <form onSubmit={handleUpdateProfile} className={styles.profileForm}>
+                <h2 className={styles.sectionTitle}>Profile Information</h2>
+                <div className={styles.grid2Col}>
                   <Input
                     label="First Name"
                     value={profileForm.firstName}
@@ -324,9 +275,9 @@ function AccountContent() {
 
             {/* T4: Addresses */}
             {activeTab === 'addresses' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h2 style={{ fontSize: 'var(--text-xl)' }}>Shipping Addresses</h2>
+              <div className={styles.tabContent}>
+                <div className={styles.addressesHeader}>
+                  <h2 className={styles.sectionTitle}>Shipping Addresses</h2>
                   {!isAddingAddress && (
                     <Button onClick={() => setIsAddingAddress(true)} className="btn-secondary btn-sm">
                       <Plus size={14} /> Add Address
@@ -335,8 +286,8 @@ function AccountContent() {
                 </div>
 
                 {isAddingAddress ? (
-                  <form onSubmit={handleAddAddress} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-5)' }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+                  <form onSubmit={handleAddAddress} className={styles.addressForm}>
+                    <div className={styles.grid2Col}>
                       <Input
                         label="First Name"
                         value={addressForm.firstName}
@@ -356,7 +307,7 @@ function AccountContent() {
                       onChange={e => setAddressForm({ ...addressForm, address1: e.target.value })}
                       required
                     />
-                    <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 'var(--space-4)' }}>
+                    <div className={styles.grid3Col}>
                       <Input
                         label="City"
                         value={addressForm.city}
@@ -376,7 +327,7 @@ function AccountContent() {
                         required
                       />
                     </div>
-                    <div style={{ display: 'flex', gap: 'var(--space-3)', marginTop: 'var(--space-2)' }}>
+                    <div className={styles.formActions}>
                       <Button type="submit" className="btn-primary">
                         Save Address
                       </Button>
@@ -386,16 +337,22 @@ function AccountContent() {
                     </div>
                   </form>
                 ) : (
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--space-4)' }} className="addresses-grid">
-                    <div className="glass" style={{ padding: 'var(--space-5)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-                      <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-accent-violet)', fontWeight: 'var(--font-weight-bold)', textTransform: 'uppercase' }}>Default Address</span>
-                      <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-primary)', lineHeight: 1.5 }}>
-                        {customer?.first_name} {customer?.last_name} <br />
-                        123 Luxury Lane, Penthouse A <br />
-                        New York, NY 10001 <br />
-                        United States
-                      </p>
-                    </div>
+                  <div className={styles.addressesGrid}>
+                    {customer?.shipping_addresses && customer.shipping_addresses.length > 0 ? (
+                      customer.shipping_addresses.map((addr: any, index: number) => (
+                        <div key={addr.id || index} className={styles.addressCard}>
+                          {index === 0 && <span className={styles.addressBadge}>Default Address</span>}
+                          <p className={styles.addressText}>
+                            {addr.first_name} {addr.last_name} <br />
+                            {addr.address_1} {addr.address_2 ? `, ${addr.address_2}` : ''} <br />
+                            {addr.city}, {addr.province} {addr.postal_code} <br />
+                            {addr.country_code?.toUpperCase()}
+                          </p>
+                        </div>
+                      ))
+                    ) : (
+                      <p className={styles.emptyState}>No shipping addresses saved yet.</p>
+                    )}
                   </div>
                 )}
               </div>
@@ -403,39 +360,28 @@ function AccountContent() {
 
             {/* T5: Wishlist */}
             {activeTab === 'wishlist' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
-                <h2 style={{ fontSize: 'var(--text-xl)' }}>My Wishlist</h2>
+              <div className={styles.tabContent}>
+                <h2 className={styles.sectionTitle}>My Wishlist</h2>
                 {wishlistItems.length > 0 ? (
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--space-4)' }} className="wishlist-grid">
+                  <div className={styles.wishlistGrid}>
                     {wishlistItems.map(item => (
-                      <div
-                        key={item.id}
-                        className="glass"
-                        style={{
-                          padding: 'var(--space-4)',
-                          borderRadius: 'var(--radius-lg)',
-                          border: '1px solid var(--color-border)',
-                          display: 'flex',
-                          gap: 'var(--space-4)',
-                          alignItems: 'center',
-                        }}
-                      >
+                      <div key={item.id} className={styles.wishlistItem}>
                         <img
                           src={item.thumbnail}
                           alt={item.title}
-                          style={{ width: '64px', height: '64px', borderRadius: 'var(--radius-md)', objectFit: 'cover' }}
+                          className={styles.wishlistThumb}
                         />
-                        <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                          <Link href={`/products/${item.handle}`} style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-semibold)', color: 'var(--color-text-primary)' }}>
+                        <div className={styles.wishlistDetails}>
+                          <Link href={`/products/${item.handle}`} className={styles.wishlistTitle}>
                             {item.title}
                           </Link>
-                          <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-secondary)', marginTop: '2px' }}>
-                            {formatPrice(item.price, item.currencyCode)}
+                          <span className={styles.wishlistPrice}>
+                            {formatPrice(item.price, 'ZAR')}
                           </span>
                         </div>
                         <button
                           onClick={() => removeFromWishlist(item.id)}
-                          style={{ color: 'var(--color-text-secondary)', cursor: 'pointer', padding: '4px' }}
+                          className={styles.wishlistRemove}
                         >
                           <Trash2 size={16} />
                         </button>
@@ -443,7 +389,7 @@ function AccountContent() {
                     ))}
                   </div>
                 ) : (
-                  <div style={{ textAlign: 'center', padding: 'var(--space-12) 0', color: 'var(--color-text-tertiary)' }}>
+                  <div className={styles.emptyState} style={{ textAlign: 'center', padding: 'var(--space-12) 0' }}>
                     Your wishlist is empty.
                   </div>
                 )}
@@ -452,42 +398,15 @@ function AccountContent() {
           </div>
         </main>
       </div>
-
-      <style jsx global>{`
-        .account-layout {
-          display: flex;
-          gap: var(--space-8);
-        }
-        .account-sidebar {
-          width: 240px;
-          flex-shrink: 0;
-        }
-        @media (max-width: 992px) {
-          .account-layout {
-            flex-direction: column;
-          }
-          .account-sidebar {
-            width: 100%;
-          }
-          .overview-cards {
-            grid-template-columns: 1fr !important;
-          }
-          .addresses-grid {
-            grid-template-columns: 1fr !important;
-          }
-          .wishlist-grid {
-            grid-template-columns: 1fr !important;
-          }
-        }
-      `}</style>
     </div>
   );
 }
 
 export default function AccountPage() {
   return (
-    <Suspense fallback={<div className="container" style={{ padding: 'var(--space-12) 0', textAlign: 'center' }}>Loading account details...</div>}>
+    <Suspense fallback={<div className={styles.container} style={{ textAlign: 'center' }}>Loading account details...</div>}>
       <AccountContent />
     </Suspense>
   );
 }
+

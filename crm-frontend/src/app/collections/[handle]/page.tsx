@@ -1,26 +1,48 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import { getCollectionByHandle, getProducts } from '@/lib/api/products';
 import ProductCard from '@/components/ui/ProductCard';
 import Breadcrumb from '@/components/ui/Breadcrumb';
-import Skeleton from '@/components/ui/Skeleton';
+import FilterSidebar, { FilterState } from '@/components/ui/FilterSidebar';
+import styles from './CollectionPage.module.css';
 
-// Mock collection data for fallback
-const MOCK_PRODUCTS = [
-  { id: 'prod_1', title: 'Aura Premium Cotton Tee', handle: 'aura-premium-cotton-tee', thumbnail: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800', collection: { id: 'col_ess', title: 'Essentials' }, variants: [{ id: 'var_1', title: 'Black / M', calculated_price: { calculated_amount: 4500, original_amount: 6000, currency_code: 'USD' } }] },
-  { id: 'prod_5', title: 'Solar Windbreaker Jacket', handle: 'solar-windbreaker-jacket', thumbnail: 'https://images.unsplash.com/photo-1548883354-7622d03aca27?w=800', collection: { id: 'col_ess', title: 'Essentials' }, variants: [{ id: 'var_5', title: 'Off-White', calculated_price: { calculated_amount: 11500, currency_code: 'USD' } }] },
-  { id: 'prod_6', title: 'Apollo Linen Longsleeve', handle: 'apollo-linen-longsleeve', thumbnail: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=800', collection: { id: 'col_ess', title: 'Essentials' }, variants: [{ id: 'var_6', title: 'Beige', calculated_price: { calculated_amount: 6500, original_amount: 8000, currency_code: 'USD' } }] },
-];
+interface Product {
+  id: string;
+  title: string;
+  handle: string;
+  thumbnail: string;
+  metadata?: Record<string, string>;
+  variants?: Array<{
+    id: string;
+    title: string;
+    calculated_price?: {
+      calculated_amount: number;
+      currency_code: string;
+      original_amount?: number;
+    };
+  }>;
+  collection?: { title: string };
+}
+
+const DEFAULT_FILTERS: FilterState = {
+  brands: [],
+  priceMin: '',
+  priceMax: '',
+  ram: [],
+  processor: [],
+};
 
 export default function CollectionDetailPage() {
   const params = useParams();
   const handle = params.handle as string;
 
-  const [products, setProducts] = useState(MOCK_PRODUCTS);
-  const [collectionTitle, setCollectionTitle] = useState('Essentials Collection');
+  const [products, setProducts] = useState<Product[]>([]);
+  const [collectionTitle, setCollectionTitle] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [sortOrder, setSortOrder] = useState('default');
+  const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
 
   useEffect(() => {
     async function loadData() {
@@ -32,17 +54,27 @@ export default function CollectionDetailPage() {
           const colObj = colRes.collections[0];
           setCollectionTitle(colObj.title);
           collectionId = colObj.id;
+        } else {
+          // Format title from handle if collection not found
+          const formatted = handle
+            .split('-')
+            .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(' ');
+          setCollectionTitle(formatted);
         }
-        
-        // Fetch products in this collection
-        const prodRes = await getProducts(collectionId ? { collection_id: [collectionId] } : undefined);
-        if (prodRes?.products?.length) {
+
+        const prodRes = await getProducts(
+          collectionId ? { collection_id: [collectionId], limit: 50 } : { limit: 50 }
+        );
+        if (prodRes?.products) {
           setProducts(prodRes.products);
         }
       } catch (err) {
-        console.warn('API error, using fallback collection products', err);
-        // Format mock title based on handle
-        const formatted = handle.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+        console.error('Failed to load collection data:', err);
+        const formatted = handle
+          .split('-')
+          .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(' ');
         setCollectionTitle(formatted);
       } finally {
         setIsLoading(false);
@@ -53,49 +85,148 @@ export default function CollectionDetailPage() {
     }
   }, [handle]);
 
-  return (
-    <div className="container" style={{ paddingTop: 'var(--space-8)', paddingBottom: 'var(--space-12)' }}>
-      {/* Breadcrumbs */}
-      <Breadcrumb items={[{ label: 'Collections', href: '/collections' }, { label: collectionTitle }]} style={{ marginBottom: 'var(--space-6)' }} />
+  // Client-side filtering
+  const filteredProducts = useMemo(() => {
+    let result = [...products];
 
-      <div style={{ marginBottom: 'var(--space-10)' }}>
-        <h1 style={{ fontSize: 'var(--text-3xl)' }}>{collectionTitle}</h1>
-        <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-secondary)', marginTop: '4px', display: 'block' }}>
-          Showing {products.length} products
-        </span>
+    // Brand filter: match against title (since Medusa doesn't have a built-in brand field)
+    if (filters.brands.length > 0) {
+      result = result.filter((p) =>
+        filters.brands.some((brand) =>
+          p.title.toLowerCase().includes(brand.toLowerCase())
+        )
+      );
+    }
+
+    // Price range filter
+    if (filters.priceMin) {
+      const min = parseFloat(filters.priceMin) * 100; // Convert to cents
+      result = result.filter((p) => {
+        const price = p.variants?.[0]?.calculated_price?.calculated_amount || 0;
+        return price >= min;
+      });
+    }
+    if (filters.priceMax) {
+      const max = parseFloat(filters.priceMax) * 100;
+      result = result.filter((p) => {
+        const price = p.variants?.[0]?.calculated_price?.calculated_amount || 0;
+        return price <= max;
+      });
+    }
+
+    // RAM filter: match against title or metadata
+    if (filters.ram.length > 0) {
+      result = result.filter((p) => {
+        const titleLower = p.title.toLowerCase();
+        const metaRam = (p.metadata?.ram || '').toLowerCase();
+        return filters.ram.some((r) => {
+          const ramLower = r.toLowerCase();
+          return titleLower.includes(ramLower) || metaRam.includes(ramLower);
+        });
+      });
+    }
+
+    // Processor filter: match against title or metadata
+    if (filters.processor.length > 0) {
+      result = result.filter((p) => {
+        const titleLower = p.title.toLowerCase();
+        const metaCpu = (p.metadata?.cpu || p.metadata?.processor || '').toLowerCase();
+        return filters.processor.some((proc) => {
+          const procLower = proc.toLowerCase();
+          return titleLower.includes(procLower) || metaCpu.includes(procLower);
+        });
+      });
+    }
+
+    // Sorting
+    if (sortOrder === 'price-asc') {
+      result.sort((a, b) => {
+        const pa = a.variants?.[0]?.calculated_price?.calculated_amount || 0;
+        const pb = b.variants?.[0]?.calculated_price?.calculated_amount || 0;
+        return pa - pb;
+      });
+    } else if (sortOrder === 'price-desc') {
+      result.sort((a, b) => {
+        const pa = a.variants?.[0]?.calculated_price?.calculated_amount || 0;
+        const pb = b.variants?.[0]?.calculated_price?.calculated_amount || 0;
+        return pb - pa;
+      });
+    } else if (sortOrder === 'name-asc') {
+      result.sort((a, b) => a.title.localeCompare(b.title));
+    }
+
+    return result;
+  }, [products, filters, sortOrder]);
+
+  return (
+    <div className={`container ${styles.page}`}>
+      <Breadcrumb
+        items={[
+          { label: 'Collections', href: '/collections' },
+          { label: collectionTitle || handle },
+        ]}
+        style={{ marginBottom: 'var(--space-6)' }}
+      />
+
+      <div className={styles.header}>
+        <h1 className={styles.title}>{collectionTitle || 'Collection'}</h1>
+        <div className={styles.meta}>
+          <span className={styles.count}>
+            {isLoading ? 'Loading...' : `Showing ${filteredProducts.length} product${filteredProducts.length !== 1 ? 's' : ''}`}
+          </span>
+          <div className={styles.sortWrapper}>
+            <span className={styles.sortLabel}>Sort by:</span>
+            <select
+              className={styles.sortSelect}
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value)}
+            >
+              <option value="default">Relevance</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="name-asc">Name: A to Z</option>
+            </select>
+          </div>
+        </div>
       </div>
 
-      {isLoading ? (
-        <div className="collection-grid">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <ProductCard key={i} loading={true} />
-          ))}
-        </div>
-      ) : (
-        <div className="collection-grid">
-          {products.map(prod => (
-            <ProductCard key={prod.id} product={prod} />
-          ))}
-        </div>
-      )}
+      <div className={styles.layout}>
+        {/* Left Sidebar - Filters */}
+        <FilterSidebar
+          filters={filters}
+          onFilterChange={setFilters}
+          onClear={() => setFilters(DEFAULT_FILTERS)}
+        />
 
-      <style jsx global>{`
-        .collection-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: var(--space-6);
-        }
-        @media (max-width: 992px) {
-          .collection-grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-        }
-        @media (max-width: 576px) {
-          .collection-grid {
-            grid-template-columns: 1fr;
-          }
-        }
-      `}</style>
+        {/* Right Content - Product Grid */}
+        {isLoading ? (
+          <div className={styles.grid}>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <ProductCard key={i} loading={true} />
+            ))}
+          </div>
+        ) : filteredProducts.length > 0 ? (
+          <div className={styles.grid}>
+            {filteredProducts.map((prod) => (
+              <ProductCard key={prod.id} product={prod} />
+            ))}
+          </div>
+        ) : (
+          <div className={styles.empty}>
+            <h3 className={styles.emptyTitle}>No products found</h3>
+            <p className={styles.emptyDesc}>
+              Try adjusting your filters or browse our other categories.
+            </p>
+            <button
+              className="btn btn-primary"
+              onClick={() => setFilters(DEFAULT_FILTERS)}
+              style={{ marginTop: 'var(--space-4)' }}
+            >
+              Clear Filters
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

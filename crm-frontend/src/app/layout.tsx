@@ -39,7 +39,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
-      <body style={{ fontFamily: "var(--font-body)" }}>
+      <body>
         <Providers>{children}</Providers>
       </body>
     </html>

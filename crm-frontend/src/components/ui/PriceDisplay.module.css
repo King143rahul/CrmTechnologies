@@ -1,0 +1,48 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+/* --- Current Price --- */
+.priceSm {
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-extrabold);
+}
+
+.priceMd {
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-extrabold);
+}
+
+.priceLg {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-weight-extrabold);
+}
+
+.priceRegular {
+  color: var(--color-blue);
+}
+
+.priceSale {
+  color: var(--color-error);
+}
+
+/* --- Compare At Price --- */
+.compareSm {
+  font-size: var(--text-xs);
+}
+
+.compareMd {
+  font-size: var(--text-sm);
+}
+
+.compareLg {
+  font-size: var(--text-base);
+}
+
+.compareAt {
+  text-decoration: line-through;
+  color: var(--color-text-tertiary);
+}

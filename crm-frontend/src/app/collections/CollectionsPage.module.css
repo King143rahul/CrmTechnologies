@@ -1,0 +1,80 @@
+.page {
+  padding-top: var(--space-8);
+  padding-bottom: var(--space-12);
+}
+
+.header {
+  margin-bottom: var(--space-10);
+}
+
+.title {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-navy);
+}
+
+.subtitle {
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  margin-top: var(--space-2);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-6);
+}
+
+.card {
+  padding: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 260px;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: #ffffff;
+  transition: box-shadow var(--transition-fast), border-color var(--transition-fast);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-blue);
+}
+
+.cardIcon {
+  font-size: 48px;
+  margin-bottom: var(--space-4);
+}
+
+.cardTitle {
+  font-size: var(--text-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-navy);
+}
+
+.cardDesc {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  max-width: 260px;
+  line-height: 1.4;
+  margin-top: var(--space-2);
+}
+
+.cardCta {
+  font-size: var(--text-xs);
+  color: var(--color-blue);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: var(--font-weight-bold);
+  margin-top: var(--space-3);
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -9,6 +9,7 @@ import { useToast } from '@/lib/context/ToastContext';
 import { formatPrice } from '@/lib/utils';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
+import styles from './CheckoutPage.module.css';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -38,9 +39,9 @@ export default function CheckoutPage() {
   });
 
   const cartSubtotal = cart?.subtotal || 0;
-  const currencyCode = cart?.region?.currency_code || 'USD';
+  const currencyCode = cart?.region?.currency_code || 'ZAR';
   const shippingCost = cartSubtotal >= 15000 ? 0 : 1500;
-  const taxCost = Math.round(cartSubtotal * 0.08);
+  const taxCost = Math.round(cartSubtotal * 0.15); // standard 15% VAT for ZAR
   const cartTotal = cartSubtotal + shippingCost + taxCost;
 
   const handleNextStep = () => {
@@ -79,9 +80,9 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div className="container" style={{ paddingTop: 'var(--space-8)', paddingBottom: 'var(--space-12)' }}>
+    <div className={styles.container}>
       {/* Step Indicators */}
-      <div className="checkout-steps-bar" style={{ display: 'flex', justifyContent: 'center', marginBottom: 'var(--space-10)', gap: 'var(--space-4)', flexWrap: 'wrap' }}>
+      <div className={styles.stepsBar}>
         {[
           { num: 1, label: 'Contact' },
           { num: 2, label: 'Shipping' },
@@ -91,48 +92,39 @@ export default function CheckoutPage() {
           const isActive = step >= item.num;
           const isDone = step > item.num;
           return (
-            <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+            <div key={idx} className={styles.stepIndicator}>
               <div
-                style={{
-                  width: '28px',
-                  height: '28px',
-                  borderRadius: 'var(--radius-full)',
-                  background: isDone ? 'var(--color-success)' : isActive ? 'var(--color-accent-violet)' : 'var(--color-bg-tertiary)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 'var(--text-xs)',
-                  fontWeight: 'var(--font-weight-bold)',
-                  color: isActive || isDone ? '#ffffff' : 'var(--color-text-secondary)',
-                  border: `1px solid ${isActive || isDone ? 'transparent' : 'var(--color-border)'}`,
-                  transition: 'background-color var(--transition-fast)',
-                }}
+                className={`${styles.stepCircle} ${
+                  isDone
+                    ? styles.stepCircleDone
+                    : isActive
+                    ? styles.stepCircleActive
+                    : styles.stepCircleInactive
+                }`}
               >
                 {isDone ? <Check size={14} /> : item.num}
               </div>
               <span
-                style={{
-                  fontSize: 'var(--text-sm)',
-                  fontWeight: isActive ? 'var(--font-weight-semibold)' : 'var(--font-weight-normal)',
-                  color: isActive ? 'var(--color-text-primary)' : 'var(--color-text-tertiary)',
-                }}
+                className={`${styles.stepLabel} ${
+                  isActive ? styles.stepLabelActive : styles.stepLabelInactive
+                }`}
               >
                 {item.label}
               </span>
-              {item.num < 4 && <div style={{ width: '40px', height: '1px', background: 'var(--color-border)' }} className="indicators-divider" />}
+              {item.num < 4 && <div className={styles.indicatorsDivider} />}
             </div>
           );
         })}
       </div>
 
-      <div className="checkout-layout">
+      <div className={styles.checkoutLayout}>
         {/* Step Forms */}
-        <main className="checkout-main-form">
-          <div className="glass-card" style={{ padding: 'var(--space-8)' }}>
+        <main className={styles.checkoutMainForm}>
+          <div>
             {/* Step 1: Contact Information */}
             {step === 1 && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
-                <h2 style={{ fontSize: 'var(--text-xl)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>Contact Information</h2>
+              <div className={styles.stepContent}>
+                <h2 className={styles.stepTitle}>Contact Information</h2>
                 <Input
                   type="email"
                   label="Email Address (For order receipts)"
@@ -146,9 +138,9 @@ export default function CheckoutPage() {
 
             {/* Step 2: Shipping Address */}
             {step === 2 && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
-                <h2 style={{ fontSize: 'var(--text-xl)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>Shipping Details</h2>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+              <div className={styles.stepContent}>
+                <h2 className={styles.stepTitle}>Shipping Details</h2>
+                <div className={styles.grid2Col}>
                   <Input
                     label="First Name"
                     value={shippingAddress.firstName}
@@ -168,7 +160,7 @@ export default function CheckoutPage() {
                   onChange={e => setShippingAddress({ ...shippingAddress, address1: e.target.value })}
                   placeholder="123 Luxury Ave, Apt 4"
                 />
-                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 'var(--space-4)' }}>
+                <div className={styles.grid3Col}>
                   <Input
                     label="City"
                     value={shippingAddress.city}
@@ -199,23 +191,13 @@ export default function CheckoutPage() {
 
             {/* Step 3: Payment */}
             {step === 3 && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
-                <h2 style={{ fontSize: 'var(--text-xl)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+              <div className={styles.stepContent}>
+                <h2 className={styles.stepTitle}>
                   <CreditCard size={20} /> Payment Details
                 </h2>
-                <div
-                  className="glass"
-                  style={{
-                    borderRadius: 'var(--radius-lg)',
-                    padding: 'var(--space-4)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 'var(--space-3)',
-                    border: '1px solid rgba(139, 92, 246, 0.2)',
-                  }}
-                >
-                  <ShieldCheck size={18} color="var(--color-accent-violet)" />
-                  <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-secondary)' }}>
+                <div className={styles.secureBadge}>
+                  <ShieldCheck size={18} color="var(--color-accent-blue)" />
+                  <span className={styles.secureText}>
                     Payment processing is fully secured and simulated. No actual charge will be made.
                   </span>
                 </div>
@@ -231,7 +213,7 @@ export default function CheckoutPage() {
                   onChange={e => setPaymentDetails({ ...paymentDetails, cardNumber: e.target.value })}
                   placeholder="4111 2222 3333 4444"
                 />
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+                <div className={styles.grid2Col}>
                   <Input
                     label="Expiry Date"
                     value={paymentDetails.expiry}
@@ -250,24 +232,20 @@ export default function CheckoutPage() {
 
             {/* Step 4: Review Order */}
             {step === 4 && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
-                <h2 style={{ fontSize: 'var(--text-xl)' }}>Review &amp; Place Order</h2>
+              <div className={styles.stepContent}>
+                <h2 className={styles.stepTitle}>Review &amp; Place Order</h2>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+                <div className={styles.reviewSection}>
                   {/* Contact Summary */}
-                  <div style={{ borderBottom: '1px solid var(--color-border)', paddingBottom: 'var(--space-4)' }}>
-                    <h4 style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--space-2)' }}>
-                      Contact Info
-                    </h4>
-                    <span style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-primary)' }}>{email}</span>
+                  <div className={styles.reviewBlock}>
+                    <h4 className={styles.reviewLabel}>Contact Info</h4>
+                    <span className={styles.reviewValue}>{email}</span>
                   </div>
 
                   {/* Shipping Summary */}
-                  <div style={{ borderBottom: '1px solid var(--color-border)', paddingBottom: 'var(--space-4)' }}>
-                    <h4 style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--space-2)' }}>
-                      Shipping Address
-                    </h4>
-                    <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-primary)', lineHeight: 1.5 }}>
+                  <div className={styles.reviewBlock}>
+                    <h4 className={styles.reviewLabel}>Shipping Address</h4>
+                    <p className={styles.reviewValue}>
                       {shippingAddress.firstName} {shippingAddress.lastName} <br />
                       {shippingAddress.address1} <br />
                       {shippingAddress.city}, {shippingAddress.state} {shippingAddress.zip}
@@ -275,11 +253,9 @@ export default function CheckoutPage() {
                   </div>
 
                   {/* Payment Summary */}
-                  <div>
-                    <h4 style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--space-2)' }}>
-                      Payment Method
-                    </h4>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', fontSize: 'var(--text-sm)', color: 'var(--color-text-primary)' }}>
+                  <div className={styles.reviewBlockNoBorder}>
+                    <h4 className={styles.reviewLabel}>Payment Method</h4>
+                    <div className={styles.reviewCardLine}>
                       <CreditCard size={16} />
                       <span>Card ending in {paymentDetails.cardNumber.slice(-4) || '4444'}</span>
                     </div>
@@ -289,7 +265,7 @@ export default function CheckoutPage() {
             )}
 
             {/* Buttons Row */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 'var(--space-10)', gap: 'var(--space-4)' }}>
+            <div className={styles.buttonRow}>
               {step > 1 ? (
                 <Button onClick={handlePrevStep} className="btn-secondary">
                   <ArrowLeft size={16} /> Back
@@ -312,28 +288,28 @@ export default function CheckoutPage() {
         </main>
 
         {/* Sidebar cart summary (Right) */}
-        <aside className="checkout-summary-sidebar">
-          <div className="glass-card" style={{ padding: 'var(--space-6)', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-            <h3 style={{ fontSize: 'var(--text-base)', fontWeight: 'var(--font-weight-bold)', borderBottom: '1px solid var(--color-border)', paddingBottom: 'var(--space-3)' }}>
+        <aside className={styles.checkoutSummarySidebar}>
+          <div className={styles.summaryCard}>
+            <h3 className={styles.summaryTitle}>
               Cart Details ({itemCount} items)
             </h3>
 
             {/* Items scroll */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)', maxHeight: '240px', overflowY: 'auto' }}>
+            <div className={styles.itemsList}>
               {cart?.items?.map(item => {
                 const itemPrice = item.variant?.calculated_price?.calculated_amount || item.unit_price || 0;
                 return (
-                  <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+                  <div key={item.id} className={styles.itemRow}>
                     <img
                       src={item.thumbnail}
                       alt={item.title}
-                      style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-md)', objectFit: 'cover' }}
+                      className={styles.itemThumb}
                     />
-                    <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, minWidth: 0 }}>
-                      <span style={{ fontSize: 'var(--text-xs)', fontWeight: 'var(--font-weight-semibold)', color: 'var(--color-text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <div className={styles.itemDetails}>
+                      <span className={styles.itemTitle}>
                         {item.title}
                       </span>
-                      <span style={{ fontSize: '10px', color: 'var(--color-text-secondary)', marginTop: '2px' }}>
+                      <span className={styles.itemMeta}>
                         Qty: {item.quantity} &times; {formatPrice(itemPrice, currencyCode)}
                       </span>
                     </div>
@@ -342,56 +318,34 @@ export default function CheckoutPage() {
               })}
             </div>
 
-            <div style={{ height: '1px', background: 'var(--color-border)' }} />
+            <div className={styles.divider} />
 
             {/* Totals group */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', fontSize: 'var(--text-sm)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ color: 'var(--color-text-secondary)' }}>Subtotal</span>
+            <div className={styles.totalsGroup}>
+              <div className={styles.totalRow}>
+                <span className={styles.totalLabelSecondary}>Subtotal</span>
                 <span>{formatPrice(cartSubtotal, currencyCode)}</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ color: 'var(--color-text-secondary)' }}>Shipping</span>
+              <div className={styles.totalRow}>
+                <span className={styles.totalLabelSecondary}>Shipping</span>
                 <span>{shippingCost === 0 ? 'Free' : formatPrice(shippingCost, currencyCode)}</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ color: 'var(--color-text-secondary)' }}>Tax</span>
+              <div className={styles.totalRow}>
+                <span className={styles.totalLabelSecondary}>Tax (VAT)</span>
                 <span>{formatPrice(taxCost, currencyCode)}</span>
               </div>
             </div>
 
-            <div style={{ height: '1px', background: 'var(--color-border)', margin: 'var(--space-1) 0' }} />
+            <div className={styles.dividerSpace} />
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'var(--font-weight-bold)', fontSize: 'var(--text-base)' }}>
+            <div className={styles.finalTotalRow}>
               <span>Total</span>
               <span className="text-gradient">{formatPrice(cartTotal, currencyCode)}</span>
             </div>
           </div>
         </aside>
       </div>
-
-      <style jsx global>{`
-        .checkout-layout {
-          display: grid;
-          grid-template-columns: 1.2fr 0.8fr;
-          gap: var(--space-8);
-          align-items: start;
-        }
-        .checkout-summary-sidebar {
-          position: sticky;
-          top: 96px;
-        }
-        @media (max-width: 992px) {
-          .checkout-layout {
-            grid-template-columns: 1fr;
-          }
-        }
-        @media (max-width: 576px) {
-          .indicators-divider {
-            display: none !important;
-          }
-        }
-      `}</style>
     </div>
   );
 }
+

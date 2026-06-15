@@ -1,140 +1,287 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
-import { ShoppingCart, Heart, User, Search, Menu, ChevronDown } from 'lucide-react';
+import { ShoppingCart, Heart, User, Search, Menu, ChevronDown, X } from 'lucide-react';
 import { useCart } from '@/lib/context/CartContext';
 import { useWishlist } from '@/lib/context/WishlistContext';
 import { useCustomer } from '@/lib/context/CustomerContext';
+import { useRegion } from '@/lib/context/RegionContext';
+import { searchProducts } from '@/lib/api/products';
+import { formatPrice } from '@/lib/utils';
+import { debounce } from '@/lib/utils';
 import MobileMenu from './MobileMenu';
+import { categoryData } from '@/lib/categoriesData';
+import styles from './Navbar.module.css';
+
+interface SearchResult {
+  id: string;
+  title: string;
+  handle: string;
+  thumbnail: string | null;
+  variants?: Array<{
+    calculated_price?: {
+      calculated_amount: number;
+      currency_code: string;
+    };
+  }>;
+}
 
 export function Navbar() {
   const { toggleCart, itemCount } = useCart();
   const { itemCount: wishlistCount } = useWishlist();
   const { isAuthenticated } = useCustomer();
-  
+  const { regionId } = useRegion();
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const megaMenuRef = useRef<HTMLDivElement>(null);
+  const megaMenuTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 30);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 30);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const categories = [
-    { name: 'Laptops', href: '/products?category=laptops' },
-    { name: 'PCs & Monitors', href: '/products?category=desktops' },
-    { name: 'Gaming', href: '/products?category=gaming' },
-    { name: 'Storage & Memory', href: '/products?category=storage' },
-    { name: 'Components', href: '/products?category=components' },
-    { name: 'Accessories', href: '/products?category=accessories' },
-    { name: 'Clearance', href: '/collections/clearance', highlight: true },
-  ];
+  // Close search on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowSearchDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Close mega menu on Escape
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsMegaMenuOpen(false);
+        setShowSearchDropdown(false);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedSearch = useCallback(
+    debounce(async (query: string) => {
+      if (query.length < 2) {
+        setSearchResults([]);
+        setShowSearchDropdown(false);
+        return;
+      }
+      setIsSearching(true);
+      try {
+        const data = await searchProducts(query, regionId);
+        if (data?.products) {
+          setSearchResults(data.products.slice(0, 8));
+          setShowSearchDropdown(true);
+        }
+      } catch {
+        setSearchResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 350),
+    [regionId]
+  );
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    debouncedSearch(value);
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      setShowSearchDropdown(false);
+      window.location.href = `/search?q=${encodeURIComponent(searchQuery.trim())}`;
+    }
+  };
+
+  const handleMegaMouseEnter = () => {
+    if (megaMenuTimerRef.current) clearTimeout(megaMenuTimerRef.current);
+    setIsMegaMenuOpen(true);
+  };
+
+  const handleMegaMouseLeave = () => {
+    megaMenuTimerRef.current = setTimeout(() => setIsMegaMenuOpen(false), 150);
+  };
 
   return (
     <>
-      <header
-        style={{
-          position: 'fixed',
-          top: isScrolled ? 0 : '30px', // Below TopBar
-          left: 0,
-          right: 0,
-          zIndex: 100,
-          background: '#ffffff',
-          boxShadow: isScrolled ? 'var(--shadow-md)' : 'none',
-          borderBottom: '1px solid var(--color-border)',
-          transition: 'top var(--transition-fast), box-shadow var(--transition-fast)',
-        }}
-      >
+      <header className={`${styles.header} ${isScrolled ? styles.headerScrolled : ''}`}>
         {/* Row 1: Logo, Search, Actions */}
-        <div style={{ borderBottom: '1px solid var(--color-border)' }}>
-          <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 'var(--space-3) var(--space-4)', gap: 'var(--space-6)' }}>
-            
+        <div className={styles.mainRow}>
+          <div className={`container ${styles.mainRowInner}`}>
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setIsMobileMenuOpen(true)}
-              style={{ display: 'none', cursor: 'pointer', color: 'var(--color-navy)' }}
-              className="mobile-toggle-btn"
+              className={styles.mobileToggle}
+              aria-label="Open menu"
             >
               <Menu size={24} />
             </button>
 
             {/* Logo */}
-            <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-              <div
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: 'var(--radius-md)',
-                  background: 'var(--color-navy)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#ffffff',
-                  fontFamily: 'var(--font-heading)',
-                  fontWeight: 'var(--font-weight-extrabold)',
-                  fontSize: '16px',
-                }}
-              >
-                CR
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
-                <span style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 'var(--font-weight-extrabold)', color: 'var(--color-navy)', letterSpacing: '-0.02em' }}>
-                  CRM
-                </span>
-                <span style={{ fontSize: '12px', fontWeight: 'var(--font-weight-medium)', color: 'var(--color-blue)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-                  Technology
-                </span>
+            <Link href="/" className={styles.logo}>
+              <div className={styles.logoIcon}>CR</div>
+              <div className={styles.logoText}>
+                <span className={styles.logoName}>CRM</span>
+                <span className={styles.logoTag}>Technology</span>
               </div>
             </Link>
 
             {/* Search Bar */}
-            <div className="search-container" style={{ flexGrow: 1, maxWidth: '600px', display: 'flex' }}>
-              <div style={{ display: 'flex', width: '100%', borderRadius: 'var(--radius-full)', border: '2px solid var(--color-blue)', overflow: 'hidden' }}>
-                <input 
-                  type="text" 
-                  placeholder="Search for products, brands or categories..." 
-                  style={{ flexGrow: 1, padding: '10px 16px', outline: 'none', fontSize: 'var(--text-sm)' }}
+            <div className={styles.searchContainer} ref={searchRef}>
+              <form onSubmit={handleSearchSubmit} className={styles.searchWrapper}>
+                <Search size={18} className={styles.searchIcon} />
+                <input
+                  type="text"
+                  placeholder="Search laptops, components, accessories..."
+                  className={styles.searchInput}
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  onFocus={() => {
+                    if (searchResults.length > 0) setShowSearchDropdown(true);
+                  }}
                 />
-                <button style={{ background: 'var(--color-blue)', color: '#ffffff', padding: '0 24px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Search size={20} />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    className={styles.searchClear}
+                    onClick={() => {
+                      setSearchQuery('');
+                      setSearchResults([]);
+                      setShowSearchDropdown(false);
+                    }}
+                    aria-label="Clear search"
+                  >
+                    <X size={16} />
+                  </button>
+                )}
+                <button type="submit" className={styles.searchBtn} aria-label="Search">
+                  Search
                 </button>
-              </div>
+              </form>
+
+              {/* Search Dropdown */}
+              {showSearchDropdown && (
+                <div className={styles.searchDropdown}>
+                  {isSearching ? (
+                    <div className={styles.searchLoading}>
+                      <div className={styles.searchSpinner} />
+                      Searching...
+                    </div>
+                  ) : searchResults.length > 0 ? (
+                    <>
+                      <div className={styles.searchDropdownHeader}>
+                        {searchResults.length} results for &ldquo;{searchQuery}&rdquo;
+                      </div>
+                      {searchResults.map((product) => {
+                        const price = product.variants?.[0]?.calculated_price;
+                        return (
+                          <Link
+                            key={product.id}
+                            href={`/products/${product.handle}`}
+                            className={styles.searchResultItem}
+                            onClick={() => setShowSearchDropdown(false)}
+                          >
+                            <div className={styles.searchResultThumbWrap}>
+                              {product.thumbnail ? (
+                                <img
+                                  src={product.thumbnail}
+                                  alt={product.title}
+                                  className={styles.searchResultThumb}
+                                />
+                              ) : (
+                                <div className={styles.searchResultThumbEmpty} />
+                              )}
+                            </div>
+                            <div className={styles.searchResultInfo}>
+                              <div className={styles.searchResultTitle}>{product.title}</div>
+                              {price && (
+                                <div className={styles.searchResultPrice}>
+                                  {formatPrice(price.calculated_amount, price.currency_code)}
+                                </div>
+                              )}
+                            </div>
+                          </Link>
+                        );
+                      })}
+                      <div className={styles.searchDropdownFooter}>
+                        <button
+                          onClick={() => {
+                            setShowSearchDropdown(false);
+                            window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
+                          }}
+                          className={styles.searchViewAll}
+                        >
+                          View all results for &ldquo;{searchQuery}&rdquo;
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div className={styles.searchNoResults}>
+                      No products found for &ldquo;{searchQuery}&rdquo;
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Actions */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-6)' }}>
-              
+            <div className={styles.actions}>
               {/* Account */}
-              <Link href={isAuthenticated ? '/account' : '/account/login'} className="action-btn">
-                <User size={24} strokeWidth={1.5} />
-                <span className="action-label">My Account</span>
+              <Link
+                href={isAuthenticated ? '/account' : '/account/login'}
+                className={styles.actionBtn}
+              >
+                <User size={22} strokeWidth={1.5} />
+                <span className={styles.actionLabel}>{isAuthenticated ? 'My Account' : 'Sign In'}</span>
               </Link>
-              
+
               {/* Wishlist */}
-              <Link href="/account?tab=wishlist" className="action-btn" style={{ position: 'relative' }}>
-                <Heart size={24} strokeWidth={1.5} />
-                <span className="action-label">Wishlist</span>
-                {wishlistCount > 0 && (
-                  <span className="badge-count">{wishlistCount}</span>
-                )}
+              <Link href="/account?tab=wishlist" className={styles.actionBtn}>
+                <div className={styles.actionIconWrap}>
+                  <Heart size={22} strokeWidth={1.5} />
+                  {wishlistCount > 0 && (
+                    <span className={styles.badgeCount}>{wishlistCount > 99 ? '99+' : wishlistCount}</span>
+                  )}
+                </div>
+                <span className={styles.actionLabel}>Wishlist</span>
               </Link>
 
               {/* Cart Trigger */}
-              <button onClick={toggleCart} className="action-btn cart-btn" style={{ position: 'relative' }}>
-                <div style={{ position: 'relative' }}>
-                  <ShoppingCart size={28} strokeWidth={1.5} color="var(--color-navy)" />
+              <button
+                onClick={toggleCart}
+                className={`${styles.actionBtn} ${styles.cartBtn}`}
+                aria-label="Open cart"
+              >
+                <div className={styles.cartIconWrap}>
+                  <ShoppingCart size={24} strokeWidth={1.5} />
                   {itemCount > 0 && (
-                    <span className="badge-count cart-badge">{itemCount}</span>
+                    <span className={`${styles.badgeCount} ${styles.cartBadge}`}>
+                      {itemCount > 99 ? '99+' : itemCount}
+                    </span>
                   )}
                 </div>
-                <div className="cart-text">
-                  <span style={{ fontSize: '10px', color: 'var(--color-text-tertiary)' }}>My Basket</span>
-                  <span style={{ fontSize: '13px', fontWeight: 'var(--font-weight-bold)', color: 'var(--color-navy)' }}>
-                    View
+                <div className={styles.cartText}>
+                  <span className={styles.cartTextLabel}>My Basket</span>
+                  <span className={styles.cartTextValue}>
+                    {itemCount > 0 ? `${itemCount} item${itemCount > 1 ? 's' : ''}` : 'Empty'}
                   </span>
                 </div>
               </button>
@@ -143,136 +290,94 @@ export function Navbar() {
         </div>
 
         {/* Row 2: Navigation Categories */}
-        <div className="category-nav-container" style={{ background: 'var(--color-surface)', borderBottom: '2px solid var(--color-blue)' }}>
+        <div className={styles.categoryNav}>
           <div className="container">
-            <nav style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-1)' }}>
-              {/* "All Departments" Dropdown Trigger */}
-              <div 
-                style={{ 
-                  background: 'var(--color-blue)', 
-                  color: '#ffffff', 
-                  padding: 'var(--space-3) var(--space-4)', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: 'var(--space-2)',
-                  fontWeight: 'var(--font-weight-bold)',
-                  cursor: 'pointer',
-                  fontSize: 'var(--text-sm)',
-                  textTransform: 'uppercase'
-                }}
+            <nav className={styles.categoryNavInner}>
+              {/* All Departments Mega Menu */}
+              <div
+                className={styles.deptWrapper}
+                onMouseEnter={handleMegaMouseEnter}
+                onMouseLeave={handleMegaMouseLeave}
+                ref={megaMenuRef}
               >
-                <Menu size={18} />
-                All Departments
-                <ChevronDown size={16} />
+                <button
+                  className={styles.deptBtn}
+                  onClick={() => setIsMegaMenuOpen(prev => !prev)}
+                  aria-expanded={isMegaMenuOpen}
+                  aria-haspopup="true"
+                >
+                  <Menu size={16} />
+                  All Departments
+                  <ChevronDown size={15} className={`${styles.chevron} ${isMegaMenuOpen ? styles.chevronOpen : ''}`} />
+                </button>
+
+                {isMegaMenuOpen && (
+                  <div className={styles.megaMenu} onMouseEnter={handleMegaMouseEnter} onMouseLeave={handleMegaMouseLeave}>
+                    <div className={styles.megaMenuGrid}>
+                      {categoryData.map((category) => (
+                        <div key={category.name} className={styles.megaMenuColumn}>
+                          <Link
+                            href={category.href}
+                            className={styles.megaMenuHeading}
+                            onClick={() => setIsMegaMenuOpen(false)}
+                          >
+                            {category.name}
+                          </Link>
+                          <ul className={styles.subCatList}>
+                            {category.subcategories.map((sub) => (
+                              <li key={sub.name} className={styles.subCatItem}>
+                                <Link
+                                  href={sub.href}
+                                  className={styles.subCatLink}
+                                  onClick={() => setIsMegaMenuOpen(false)}
+                                >
+                                  {sub.name}
+                                </Link>
+                                {sub.items && (
+                                  <ul className={styles.nestedItemsList}>
+                                    {sub.items.map((item) => {
+                                      const itemHref = `${sub.href}?q=${encodeURIComponent(item)}`;
+                                      return (
+                                        <li key={item} className={styles.nestedItem}>
+                                          <Link
+                                            href={itemHref}
+                                            className={styles.nestedLink}
+                                            onClick={() => setIsMegaMenuOpen(false)}
+                                          >
+                                            {item}
+                                          </Link>
+                                        </li>
+                                      );
+                                    })}
+                                  </ul>
+                                )}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Top Level Links */}
-              {categories.map((cat, idx) => (
-                <Link
-                  key={idx}
-                  href={cat.href}
-                  style={{
-                    fontSize: 'var(--text-sm)',
-                    fontWeight: 'var(--font-weight-bold)',
-                    color: cat.highlight ? 'var(--color-error)' : 'var(--color-navy)',
-                    padding: 'var(--space-3) var(--space-4)',
-                    transition: 'color var(--transition-fast)',
-                    textTransform: 'uppercase'
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.color = 'var(--color-blue)'}
-                  onMouseLeave={e => e.currentTarget.style.color = cat.highlight ? 'var(--color-error)' : 'var(--color-navy)'}
-                >
-                  {cat.name}
-                </Link>
-              ))}
+              {/* Category Quick Links */}
+              <div className={styles.navLinksScroll}>
+                {categoryData.map((cat, idx) => (
+                  <Link
+                    key={idx}
+                    href={cat.href}
+                    className={styles.categoryLink}
+                  >
+                    {cat.name}
+                  </Link>
+                ))}
+              </div>
             </nav>
           </div>
         </div>
       </header>
 
-      {/* CSS style block to handle media queries for navigation */}
-      <style jsx global>{`
-        .action-btn {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 4px;
-          color: var(--color-navy);
-          cursor: pointer;
-          transition: color var(--transition-fast);
-        }
-        .action-btn:hover {
-          color: var(--color-blue);
-        }
-        .action-label {
-          font-size: 11px;
-          font-weight: var(--font-weight-medium);
-        }
-        .badge-count {
-          position: absolute;
-          top: -6px;
-          right: 4px;
-          background: var(--color-orange);
-          color: #ffffff;
-          font-size: 10px;
-          font-weight: var(--font-weight-bold);
-          min-width: 18px;
-          height: 18px;
-          border-radius: var(--radius-full);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 0 4px;
-          border: 2px solid #ffffff;
-        }
-        .cart-btn {
-          flex-direction: row;
-          align-items: center;
-          gap: 12px;
-          background: var(--color-bg-secondary);
-          padding: 8px 16px;
-          border-radius: var(--radius-full);
-        }
-        .cart-badge {
-          top: -8px;
-          right: -8px;
-        }
-        .cart-text {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          line-height: 1.1;
-        }
-
-        @media (max-width: 1024px) {
-          .category-nav-container {
-            display: none !important;
-          }
-          .search-container {
-            order: 3;
-            width: 100%;
-            max-width: 100%;
-            margin-top: 12px;
-          }
-          .container {
-            flex-wrap: wrap;
-          }
-        }
-        @media (max-width: 768px) {
-          .mobile-toggle-btn {
-            display: flex !important;
-          }
-          .action-label, .cart-text {
-            display: none !important;
-          }
-          .cart-btn {
-            padding: 4px;
-            background: transparent;
-          }
-        }
-      `}</style>
-
-      {/* Overlays */}
       <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
     </>
   );
