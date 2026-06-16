@@ -2,12 +2,11 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Heart, ShoppingCart } from 'lucide-react';
+import { Heart, ShoppingCart, Eye, BarChart3 } from 'lucide-react';
 import { useCart } from '@/lib/context/CartContext';
 import { useWishlist } from '@/lib/context/WishlistContext';
 import { useToast } from '@/lib/context/ToastContext';
-import PriceDisplay from './PriceDisplay';
-import Badge from './Badge';
+import { formatPrice, getPercentageOff } from '@/lib/utils';
 import Skeleton from './Skeleton';
 import styles from './ProductCard.module.css';
 
@@ -92,13 +91,15 @@ export function ProductCard({ product, loading = false }: ProductCardProps) {
 
   if (loading || !product) {
     return (
-      <div className={styles.skeletonCard}>
-        <Skeleton height="200px" borderRadius="var(--radius-sm)" />
-        <Skeleton width="40%" height="14px" />
-        <Skeleton width="90%" height="20px" />
-        <Skeleton width="70%" height="14px" />
-        <Skeleton width="60%" height="16px" />
-        <Skeleton height="36px" borderRadius="var(--radius-sm)" style={{ marginTop: 'auto' }} />
+      <div className={styles.card}>
+        <div className={styles.imageContainer}>
+          <Skeleton height="200px" borderRadius="0" />
+        </div>
+        <div className={styles.details}>
+          <Skeleton width="90%" height="16px" />
+          <Skeleton width="70%" height="14px" />
+          <Skeleton width="50%" height="20px" />
+        </div>
       </div>
     );
   }
@@ -108,6 +109,7 @@ export function ProductCard({ product, loading = false }: ProductCardProps) {
   const originalAmount = defaultVariant?.calculated_price?.original_amount;
   const currencyCode = defaultVariant?.calculated_price?.currency_code || 'ZAR';
   const isSale = originalAmount && originalAmount > priceAmount;
+  const discount = isSale ? getPercentageOff(originalAmount, priceAmount) : 0;
   const specs = extractSpecs(product);
   const wishlistActive = isInWishlist(product.id);
 
@@ -146,44 +148,73 @@ export function ProductCard({ product, loading = false }: ProductCardProps) {
 
   return (
     <Link href={`/products/${product.handle}`} className={styles.card}>
-      {/* Badges / Actions Overlay */}
-      <div className={styles.overlay}>
-        <div className={styles.badges}>
-          {isSale && <Badge variant="sale">Sale</Badge>}
-          {priceAmount > 200000 && (
-            <Badge variant="stock" className={styles.badgeFreeDelivery}>
-              Free Delivery
-            </Badge>
-          )}
+      {/* Discount Badge */}
+      {isSale && (
+        <div className={styles.discountBadge}>
+          -{discount}%
         </div>
-        <button
-          onClick={handleAddToWishlist}
-          className={`${styles.wishlistBtn} ${wishlistActive ? styles.wishlistBtnActive : ''}`}
-          aria-label={wishlistActive ? 'Remove from wishlist' : 'Add to wishlist'}
-        >
-          <Heart size={16} fill={wishlistActive ? 'var(--color-error)' : 'none'} />
-        </button>
-      </div>
+      )}
 
-      {/* Thumbnail */}
+      {/* Wishlist Heart */}
+      <button
+        onClick={handleAddToWishlist}
+        className={`${styles.wishlistBtn} ${wishlistActive ? styles.wishlistActive : ''}`}
+        aria-label={wishlistActive ? 'Remove from wishlist' : 'Add to wishlist'}
+      >
+        <Heart size={16} fill={wishlistActive ? '#E8382F' : 'none'} />
+      </button>
+
+      {/* Product Image */}
       <div className={styles.imageContainer}>
         {product.thumbnail ? (
           <img
             src={product.thumbnail}
             alt={product.title}
             className={styles.thumbnail}
+            loading="lazy"
           />
         ) : (
-          <div className={styles.noImage}>No Image</div>
+          <div className={styles.noImage}>
+            <ShoppingCart size={32} color="var(--text-muted)" />
+          </div>
         )}
+
+        {/* Hover Action Bar */}
+        <div className={styles.hoverActions}>
+          <button
+            onClick={handleAddToCart}
+            className={styles.hoverBtn}
+            disabled={isAdding}
+            title="Quick Shop"
+          >
+            <ShoppingCart size={15} />
+            <span>Quick Shop</span>
+          </button>
+          <Link
+            href={`/products/${product.handle}`}
+            className={styles.hoverBtnIcon}
+            title="Quick View"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Eye size={15} />
+          </Link>
+          <button className={styles.hoverBtnIcon} title="Compare">
+            <BarChart3 size={15} />
+          </button>
+        </div>
       </div>
 
       {/* Product Details */}
       <div className={styles.details}>
-        {/* Full title — no truncation for tech products */}
+        {/* Category Tag */}
+        {product.collection?.title && (
+          <span className={styles.categoryTag}>{product.collection.title}</span>
+        )}
+
+        {/* Title */}
         <h4 className={styles.title}>{product.title}</h4>
 
-        {/* Tech Specs Bullet List */}
+        {/* Tech Specs */}
         {specs.length > 0 && (
           <ul className={styles.specsList}>
             {specs.map((spec, i) => (
@@ -195,28 +226,23 @@ export function ProductCard({ product, loading = false }: ProductCardProps) {
           </ul>
         )}
 
-        {/* Price */}
+        {/* Price Area */}
         <div className={styles.priceArea}>
-          <PriceDisplay
-            amount={priceAmount}
-            compareAtAmount={originalAmount}
-            currencyCode={currencyCode}
-            size="md"
-          />
+          {isSale && (
+            <span className={styles.originalPrice}>
+              {formatPrice(originalAmount, currencyCode)}
+            </span>
+          )}
+          <span className={`${styles.currentPrice} ${isSale ? styles.salePrice : ''}`}>
+            {formatPrice(priceAmount, currencyCode)}
+          </span>
         </div>
-      </div>
 
-      {/* Add to Cart CTA */}
-      {defaultVariant && (
-        <button
-          onClick={handleAddToCart}
-          disabled={isAdding}
-          className={styles.addToCartBtn}
-        >
-          <ShoppingCart size={16} />
-          {isAdding ? 'Adding...' : 'Add to Basket'}
-        </button>
-      )}
+        {/* Free Delivery Badge */}
+        {priceAmount > 200000 && (
+          <span className={styles.freeDelivery}>🚚 Free Delivery</span>
+        )}
+      </div>
     </Link>
   );
 }

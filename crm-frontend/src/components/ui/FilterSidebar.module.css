@@ -1,140 +1,99 @@
+/* ===================================================================
+   FilterSidebar — Collection/Product Filter Panel
+   =================================================================== */
+
 .sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-  padding: var(--space-4);
-  background: #ffffff;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  width: 260px;
+  flex-shrink: 0;
   position: sticky;
-  top: 170px;
-  max-height: calc(100vh - 190px);
+  top: calc(var(--header-total-height) + var(--space-6));
+  max-height: calc(100vh - var(--header-total-height) - var(--space-12));
   overflow-y: auto;
 }
 
-.sidebarTitle {
-  font-size: var(--text-lg);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-navy);
-  padding-bottom: var(--space-3);
-  border-bottom: 2px solid var(--color-blue);
+.group {
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--border-light);
 }
 
-/* --- Filter Section --- */
-.filterSection {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
+.group:first-child {
+  padding-top: 0;
 }
 
-.filterHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  padding: var(--space-1) 0;
-  user-select: none;
-}
-
-.filterLabel {
+.groupTitle {
   font-size: var(--text-sm);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
   text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
-.filterChevron {
-  color: var(--color-text-tertiary);
-  transition: transform var(--transition-fast);
-}
-
-.filterChevronOpen {
-  transform: rotate(180deg);
-}
-
-.filterBody {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-/* --- Checkbox Items --- */
-.checkboxItem {
+.option {
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  padding: var(--space-1) 0;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
   cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.option:hover {
+  color: var(--crm-primary);
+}
+
+.optionActive {
+  color: var(--crm-primary);
+  font-weight: 600;
 }
 
 .checkbox {
   width: 16px;
   height: 16px;
-  border: 1px solid var(--color-border);
-  border-radius: 3px;
-  cursor: pointer;
-  accent-color: var(--color-blue);
+  border: 2px solid var(--border-dark);
+  border-radius: var(--radius-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
 }
 
-.checkboxLabel {
-  font-size: var(--text-sm);
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  flex: 1;
+.checkboxActive {
+  background: var(--crm-primary);
+  border-color: var(--crm-primary);
 }
 
-.checkboxCount {
-  font-size: var(--text-xs);
-  color: var(--color-text-tertiary);
-}
-
-/* --- Price Range --- */
-.priceInputs {
+.priceRange {
   display: flex;
   align-items: center;
   gap: var(--space-2);
 }
 
 .priceInput {
-  flex: 1;
-  padding: var(--space-2);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
   font-size: var(--text-sm);
-  outline: none;
-  background: #ffffff;
-  color: var(--color-text-primary);
-}
-
-.priceInput:focus {
-  border-color: var(--color-blue);
-}
-
-.priceSeparator {
-  color: var(--color-text-tertiary);
-  font-size: var(--text-sm);
-}
-
-/* --- Action Buttons --- */
-.actions {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  margin-top: var(--space-2);
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--color-border);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--bg-white);
+  color: var(--text-primary);
 }
 
 .clearBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
   font-size: var(--text-xs);
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  text-align: center;
-  padding: var(--space-1);
-  background: none;
-  border: none;
-  transition: color var(--transition-fast);
+  font-weight: 600;
+  color: var(--crm-accent);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
 }
 
 .clearBtn:hover {
-  color: var(--color-error);
+  background: var(--crm-accent-light);
 }

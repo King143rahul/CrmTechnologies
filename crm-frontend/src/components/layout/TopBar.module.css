@@ -1,72 +1,75 @@
 .topBar {
-  background: var(--color-navy);
-  color: #ffffff;
-  font-size: var(--text-xs);
-  padding: var(--space-1) 0;
   width: 100%;
+  height: var(--header-top-height);
+  background: var(--crm-primary-dark);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: var(--text-xs);
   position: relative;
-  z-index: 101;
+  z-index: var(--z-header);
 }
 
-.inner {
+.container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+  height: 100%;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 }
 
 .left {
   display: flex;
   align-items: center;
-  gap: var(--space-6);
-}
-
-.businessLink {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.businessLabel {
-  font-weight: var(--font-weight-medium);
-  color: #a0aec0;
-}
-
-.businessCta {
-  color: #ffffff;
-  text-decoration: underline;
+  gap: var(--space-5);
 }
 
 .right {
   display: flex;
   align-items: center;
-  gap: var(--space-6);
+  gap: var(--space-4);
 }
 
-.rightLink {
-  display: flex;
+.contactItem {
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-1);
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
   transition: color var(--transition-fast);
+  white-space: nowrap;
 }
 
-.rightLink:hover {
-  color: var(--color-orange);
+.contactItem:hover {
+  color: #fff;
 }
 
-.phoneLink {
-  display: flex;
+.shippingNotice {
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-weight: var(--font-weight-bold);
+  gap: var(--space-1);
+  color: #FDE68A;
+  font-weight: 600;
+}
+
+.divider {
+  width: 1px;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.link {
+  color: rgba(255, 255, 255, 0.8);
+  transition: color var(--transition-fast);
+  white-space: nowrap;
+}
+
+.link:hover {
+  color: #fff;
 }
 
 @media (max-width: 768px) {
-  .inner {
-    flex-direction: column;
-    gap: 4px;
-    padding: 4px var(--space-4);
-  }
-  .left {
+  .topBar {
     display: none;
   }
 }
